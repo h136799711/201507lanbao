@@ -1,0 +1,541 @@
+<extend name="template/base_index" />
+
+<block name="area_header">
+	<link rel="stylesheet" href="__CSS__/shangjia.css">
+	<script type="text/javascript" src="__PUBLIC__/Home/js/location.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/Home/js/area.js"></script>
+	<!--<link type="text/css" rel="stylesheet" href="__CDN__/theme/{$cfg.theme|default="simplex"}.min.css" />-->
+	<script src="__CDN__/select2/3.5.2/select2.js"></script>
+	<link href="__CDN__/select2/3.5.2/select2.css" rel="stylesheet" />
+	<style type="text/css">
+		.yz li{ height: 55px;line-height: 40px;padding-left: 53px;}
+		.yz i{color: #CCCCCC; font-size: 60px; float: left; font-size: 40px; }
+		.am-modal-dialog{ }
+		.am-modal-bd{ text-align: left;  padding: 10px; margin-left: 20px; font-size: 14px;}
+		.am-modal-bd input{ margin-top: 5px; }.am-modal-bd select{ margin-top: 5px; }
+		.am-modal-bd span{ font-size: 10px; }
+		.bank tr td{font-size: 13px;}
+		.am-icon-mobile{padding-left: 10px;}
+	</style>
+</block>
+
+<block name="area_body">
+	<div class="seller_header_wrap">
+		<div class="seller_header clearfix" style="background: url(__IMG__/header_main_bg.jpg);">
+			<a class="logo" href="#" style=" background: url(__IMG__/logo.png) no-repeat 20px;"></a>
+			<div class="pull-left gzt btn-group">
+				<a class="shifu btn" href="#">试福</a>
+				<a class="taofu btn" href="#">淘福</a>
+				<a class="dropdown-toggle btn" data-toggle="dropdown" href="javascript:;">　账户关联　 <b class="caret"></b></a>
+				<ul role="menu" class="dropdown-menu pull-right">
+					<li role="menuitem"><a tabindex="-1" href="#">关联店铺管理&gt;&gt;</a>
+					</li>
+				</ul>
+			</div>
+			<a style="margin-top:57px; margin-left:20px;" class="text-info pull-left" href="#">试民淘宝号确认</a>
+			<div class="topmenu">
+				<ul class="clearfix">
+					<li>
+						<div>您好，<span class="text-link">{$username}</span>
+							<a href="{:U('Home/Usersj/exits')}">[退出]</a>
+						</div>
+					</li>
+					<li class="shangjia"><a href="{:U('Home/Usersj/index')}">商家中心</a>
+					</li>
+					<li><a href="{:U('Home/Index/index')}">回到首页</a>
+					</li>
+					<li><a href="{:U('Home/Usersj/sj_znxx')}">站内消息</a>
+					</li>
+					<li class="bangzhu"><a href="#">帮助中心</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div></div>
+	<div class="seller_main clearfix" controller="seller/common">
+		<div class="seller_content_wrap">
+			<div class="seller_content" style="padding-top: 10px;">
+
+				<div class="content">
+					<h1>资金管理</h1>
+					<div class="zjgl clearfix">
+						<div class="l">
+							<div class="l1">
+								<div><span class="t">资金概况</span>
+									<button style="height: 28px; width: 70px; border-radius:5px ; font-size: 12px ; text-align: center;" class="am-btn am-btn-primary am-btn-xs" data-am-modal="{target: '#doc-modal-2', closeViaDimmer: 0, width:600, height: 700}">充值</button>&nbsp;
+									<button style="height: 28px; width: 70px; border-radius:5px ; font-size: 12px ; text-align: center;" class="am-btn am-btn-primary am-btn-xs" data-am-modal="{target: '#doc-modal-3', closeViaDimmer: 0, width:600, height: 220}">提现</button>&nbsp;</div>
+								<div class="p20"></div>
+								<div class="row-fluid">
+									<div class="span3">
+										总余额
+										<br>
+										<div class="price">
+											￥{$coins} </div>
+									</div>
+									<div class="span3">
+										可用余额
+										<br>
+										<div class="price">
+											￥{$coins} </div>
+									</div>
+									<div class="span3">
+										冻结金额
+										<br>
+										<div class="price">
+											￥0.000 </div>
+									</div>
+									<div class="span3">
+										提现中
+										<br>
+										<div class="price">
+											￥{$sum}.000</div>
+									</div>
+
+								</div>
+
+							</div>
+							<div class="l2">
+								<table class="bank" style="width: 100%;">
+									<tr>
+										<td colspan="8"><b style="color: #999;">提现账号 </b>
+											<button class="am-btn am-btn-primary am-btn-xs" style="font-family: '微软雅黑'; font-size: 13px; width: 80px; height: 30px;line-height: 10px; padding: 10px; border-radius:5px ;" data-am-modal="{target: '#doc-modal-1', closeViaDimmer: 0, width: 400, height: 355}">更换账号</button>
+										</td>
+									</tr>
+
+									<tr>
+
+										<td>{$bank['bank_name']}</td>
+										<td>{$bank['bank_account']}</td>
+										<td>{$bank['cardholder']}</td>
+										<td>{$bank['province']}{$bank['city']}</td>
+									</tr>
+
+								</table>
+
+							</div>
+						</div>
+						<div class="m">
+							<div class="m1">
+								<div class="t text-center">安全中心</div>
+								<div class="p20"></div>
+
+								<ul style="" class="yz">
+									<empty name="email">
+										<i class="am-icon-envelope-o"></i>
+										<li>未认证</li>
+										<else/>
+										<i class="am-icon-envelope-o" style="color: hotpink;"></i>
+										<li>已认证</li>
+									</empty>
+									<empty name="phone">
+										<i class="am-icon-mobile"></i>
+										<li>未认证</li>
+										<else/>
+										<i class="am-icon-mobile" style="color: hotpink;"></i>
+										<li>已认证</li>
+									</empty>
+
+								</ul>
+
+							</div>
+						</div>
+
+						<div class="r">
+							<div class="r1">
+								<div class="t">商家充值流程</div>
+								<div class="p20"></div>
+								<div>
+									一、从以下收款账户内选择自己方便转账的银行账户进行转账；
+									<br> 二、转账成功后，点击【充值】按钮；
+									<br> 三、按账户充值提示，选择自己所充值的银行账户、填入充值金额、交易流水号或上传交易凭证；
+									<br> 四、核对信息无误后，点击【提交】即可。
+									<br>
+									<div class="text-warning">小提示：转账时请务必按照【宝贝街账号+用途】的格式进行备注；</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="p20"></div>
+					<div class="p20"></div>
+					<script type="text/javascript">
+						function changeBB(i){
+							$(".bb ul li").eq(i).addClass("active").siblings().removeClass("active");
+							$(".bb div table").eq(i).show().siblings().hide();
+						}
+					</script>
+
+					<div class="bb jquery-once-1-processed">
+						<ul class="nav_price nav nav-tabs" role="menu">
+							<li class="active" role="menuitem" onclick="changeBB(0)"><a tabindex="-1" href="javascript:void(0)">帐号收支明细</a>
+							</li>
+							<li role="menuitem" onclick="changeBB(1)"><a tabindex="-1" href="javascript:void(0)">提现明细记录</a>
+							</li>
+							<li role="menuitem" onclick="changeBB(2)"><a tabindex="-1" href="javascript:void(0)">充值明细记录</a>
+							</li>
+						</ul>
+						<div id="goodsorder-grid" class="grid-view" controller="extend/gridview" data-options="{'ajaxUpdate':['goodsorder-grid'],'ajaxVar':'ajax','pagerClass':'pagination text-center','loadingClass':'grid-view-loading','filterClass':'filters','tableClass':'price-table table table-hover','selectableRows':1,'enableHistory':false,'updateSelector':'{page}, {sort}','filterSelector':'{filter}','pageVar':'YueLog_page','arg_id':'YueLog'}">
+							<table class="price-table table table-hover">
+								<thead>
+									<tr>
+										<th width="120" id="goodsorder-grid_c0">交易编号</th>
+										<th width="200" id="goodsorder-grid_c1"><a class="sort-link" href="">交易时间<span class="caret"></span></a>
+										</th>
+										<th width="150" id="goodsorder-grid_c2">名称｜备注</th>
+										<th width="100" id="goodsorder-grid_c3">收入</th>
+										<th width="100" id="goodsorder-grid_c4">支出</th>
+										<th width="100" id="goodsorder-grid_c5">余额</th>
+									</tr>
+								</thead>
+								<tbody>
+									<empty name="all">
+										<tr>
+											<td colspan="6" class="empty"><span class="empty">没有找到数据.</span>
+											</td>
+										</tr>
+										<else />
+										<volist name="all" id="v">
+											<tr>
+												<td>{$v.id}</td>
+												<td>{$vo.create_time|date='Y-m-d H:i:s',###}</td>
+												<td>{$v.notes}</td>
+												<td>{$v.income}</td>
+												<td>{$v.defray}</td>
+												<td>{$coins}</td>
+											</tr>
+										</volist>
+									</empty>
+								</tbody>
+							</table>
+
+							<table class="price-table table table-hover" style="display: none;">
+								<thead>
+									<tr>
+										<th width="80" id="goodsorder-grid_c0">
+											<a class="sort-link" href="/seller/price/index?status=2&amp;MemberTixian_sort=id">编号<span class="caret"></span></a>
+										</th>
+										<th width="100" id="goodsorder-grid_c1"><a class="sort-link" href="#">提现金额<span class="caret"></span></a>
+										</th>
+										<th width="120" id="goodsorder-grid_c2"><a class="sort-link" href="#">申请时间<span class="caret"></span></a>
+										</th>
+										<th width="120" id="goodsorder-grid_c3"><a class="sort-link" href="#">提现时间<span class="caret"></span></a>
+										</th>
+										<th width="120" id="goodsorder-grid_c4"><a class="sort-link" href="#">提现状态<span class="caret"></span></a>
+										</th>
+										<th width="200" id="goodsorder-grid_c5"><a class="sort-link" href="#">提现信息<span class="caret"></span></a>
+										</th>
+										<th id="goodsorder-grid_c6"><a class="sort-link" href="#">备注<span class="caret"></span></a>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<empty name="tixian">
+										<tr>
+											<td colspan="6" class="empty"><span class="empty">没有找到数据.</span>
+											</td>
+										</tr>
+										<else />
+										<volist name="tixian" id="v">
+											<tr>
+												<td>{$v.id}</td>
+												<td>{$v.defray}</td>
+												<td>{$vo.create_time|date='Y-m-d H:i:s',###}</td>
+												<td>{$vo.create_time|date='Y-m-d H:i:s',###}</td>
+												<td><if condition="$v.status eq 1">正常</if><if condition="$v.status eq 2">审核中</if><if condition="$v.status eq 3">冻结中</if></td>
+												<td><if condition="$v.dtree_type eq 1">后台充值</if><if condition="$v.dtree_type eq 2">系统奖励</if><if condition="$v.dtree_type eq 3">提现</if></td>
+												<td>{$v.notes}</td>
+											</tr>
+										</volist>
+									</empty>
+								</tbody>
+							</table>
+
+							<table class="price-table table table-hover" style="display: none;">
+								<thead>
+									<tr>
+										<th width="60" id="goodsorder-grid_c0">
+											<a class="sort-link" href="#">编号<span class="caret"></span></a>
+										</th>
+										<th width="220" id="goodsorder-grid_c1">收款帐号</th>
+										<th width="80" id="goodsorder-grid_c2"><a class="sort-link" href="#">充值金额<span class="caret"></span></a>
+										</th>
+										<th width="100" id="goodsorder-grid_c3">流水号</th>
+										<th width="80" id="goodsorder-grid_c4">提交时间</th>
+										<th width="160" id="goodsorder-grid_c5">处理结果</th>
+										<th id="goodsorder-grid_c6">系统备注</th>
+									</tr>
+								</thead>
+								<tbody>
+									<empty name="chongzhi">
+										<tr>
+											<td colspan="6" class="empty"><span class="empty">没有找到数据.</span>
+											</td>
+										</tr>
+										<else />
+										<volist name="chongzhi" id="v">
+											<tr>
+												<td>{$v.id}</td>
+												<td>{$username}</td>
+												<td>{$v.income}</td>
+												<td>{$vo.create_time|date='Y-m-d H:i:s',###}</td>
+												<td><if condition="$v.status eq 1">正常</if><if condition="$v.status eq 2">审核中</if><if condition="$v.status eq 3">冻结中</if></td>
+												<td><if condition="$v.dtree_type eq 1">后台充值</if><if condition="$v.dtree_type eq 2">系统奖励</if><if condition="$v.dtree_type eq 3">提现</if></td>
+												<td>{$v.notes}</td>
+											</tr>
+										</volist>
+									</empty>
+								</tbody>
+							</table>
+							<div class="row-fluid">
+								<div class="span6 offset3"></div>
+								<div class="span3"></div>
+							</div>
+							<div class="keys" style="display:none" title="/seller/price"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1">
+			<div class="am-modal-dialog">
+				<div class="am-modal-hd">更换提现账号
+					<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+				</div>
+				<form action="{:U('Home/SJMoney/addbank')}" method="post">
+					<div class="am-modal-bd">开户行：
+						<select name="bank">
+							<option value="">请选择</option>
+							<option value="招商银行">招商银行</option>
+							<option value="工商银行">工商银行</option>
+							<option value="建设银行">建设银行</option>
+							<option value="兴业银行">兴业银行</option>
+							<option value="农业银行">农业银行</option>
+							<option value="邮政储蓄">邮政储蓄</option>
+							<option value="交通银行">交通银行</option>
+							<option value="广东发展银行">广东发展银行</option>
+							<option value="中信银行">中信银行</option>
+							<option value="光大银行">光大银行</option>
+							<option value="民生银行">民生银行</option>
+							<option value="浦发银行">浦发银行</option>
+							<option value="中国银行">中国银行</option>
+							<option value="农村信用社">农村信用社</option>
+							<option value="北京银行">北京银行</option>
+							<option value="平安银行">平安银行</option>
+							<option value="农村商业银行">农村商业银行</option>
+							<option value="广东南粤银行">广东南粤银行</option>
+							<option value="上海银行">上海银行</option>
+						</select>
+						<br><span style="color: forestgreen;">推荐使用银行卡提现，每日提现三次且不收取手续费</span>
+						<br> 银行账号：
+						<input type="tel" name="bank_num" id="daan" value="" />
+						<br> 持卡人：
+						<input type="text" name="name" id="daan" value="" />
+						<br> 开户信息：
+						<select id="loc_province" style="width:120px; margin-top: 5px;"></select>
+						<select id="loc_city" style="width:120px; margin-left: 10px;margin-top: 5px;"></select>
+						<br> 输入登录密码：
+						<input type="password" name="pwd" id="daan" value="" />
+						<br>
+						<input type="hidden" name="sheng" class="sheng" />
+						<input type="hidden" name="shi" class="shi" />
+					</div>
+					<input style="font-family: '微软雅黑'; font-size: 13px; border-radius:5px ; margin-top: -8px;" class="am-btn-danger am-btn-xs" type="submit" value="确认" />
+				</form>
+			</div>
+		</div>
+		<div class="siderbar">
+
+			<dl class="open">
+				<dt class="s_vip">
+
+      <span>账号管理</span>
+
+    </dt>
+				<dd>
+					<a class="" href="{:U('Home/Usersj/sj_zhxx')}"><span>账号信息</span></a>
+				</dd>
+				<dd>
+					<a class="" href="{:U('Home/Usersj/sj_zhaq')}"><span>账户安全</span></a>
+				</dd>
+				<dd>
+					<a class="" href="{:U('Home/Usersj/sj_xgmm')}"><span>修改密码</span></a>
+				</dd>
+			</dl>
+
+			<dl>
+				<dt>
+
+
+
+      <a class="" href="{:U('Home/Usersj/sj_znxx')}">站内消息</a>
+
+
+
+    </dt>
+				<dt class="s_money">
+
+
+
+      <a class="active" href="{:U('Home/Usersj/sj_zjgl')}">资金管理</a>
+
+
+
+    </dt>
+				<dt>
+
+
+
+      <a class="" href="{:U('Home/Usersj/sj_viptd')}">VIP通道</a>
+
+
+
+    </dt>
+				<dt>
+
+
+
+      <a class="" href="{:U('Home/Usersj/sj_sfkt')}">试福课堂</a>
+
+
+
+    </dt>
+			</dl>
+
+			<div class="adorn_bottom"></div>
+		</div>
+	</div>
+	<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-2">
+		<div class="am-modal-dialog" style="border-radius:12px ;">
+			<div class="am-modal-hd" style="text-align: left; border-bottom: 1px solid #ccc; font-weight: bold;">账户充值
+				<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+			</div>
+			<div class="am-modal-bd" style="text-align: center;">
+				<div style=" background: lightgoldenrodyellow; margin-top: 5px; color: red;">转账时请备注你的宝贝街账号 "{$username}"</div>
+				<form action="{:U('Home/SJMoney/recharge')}" method="post" > 
+				<table style=" width: 100%;color: #666;">
+					<tr>
+						<td style="width: 20%;" align="right">收款帐号:</td>
+						<td align="left" style="padding: 10px;">
+							<select name="zhanghao" style="width:300px;height: 30px; border-radius: 5px;border: 1px solid #ccc;">
+								<option>请选择</option>
+								<option value="农业银行 6228480328888888888 小明">农业银行 6228480328888888888 小明</option>
+								<option value="建设银行 6217001546666666666 小明">建设银行 6217001546666666666 小明</option>
+								<option value="工商银行 6212261279999999999 小明">工商银行 6212261279999999999 小明</option>
+								<option value="支 付 宝 baobeijie@266.com 小明(慎用)">支 付 宝 baobeijie@266.com 小明(慎用)</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">充值金额:</td>
+						<td align="left" style="padding: 10px;">
+							<input name="money" type="number" style="width:150px;height: 30px;border-bottom-left-radius: 5px;border-top-left-radius: 5px;border: 1px solid #ccc;" />
+							<input type="button" style="border: 1px solid #ccc;width:50px;height: 30px;border-bottom-right-radius: 5px;border-top-right-radius: 5px;" disabled="disabled" value="元" />
+						</td>
+					</tr>
+					<tr>
+						<td align="right">交易流水号:</td>
+						<td align="left" style="padding: 10px;">
+							<input name="stnum" style="width:350px;height: 30px;border-radius: 5px; border: 1px solid #ccc;" />
+						</td>
+					</tr>
+					<tr>
+						<td align="right">交易凭证:</td>
+						<td align="left" style="padding: 10px;">
+							<div class="am-form-group am-form-file">
+
+								<div class="am-form-group am-form-file">
+									<button type="button" class="am-btn am-btn-danger am-btn-sm">
+										<i class="am-icon-cloud-upload"></i> 选择要上传的文件</button>
+									<input id="doc-form-file" type="file" >
+								</div>
+								<div id="file-list"></div>
+						</td>
+					</tr>
+					<tr>
+						<td align="center" colspan="2">
+							<button type="submit" class="am-btn am-btn-primary am-radius am-btn-sm">
+								提交
+							</button>
+							<button type="button" class="am-btn am-btn-default am-radius am-btn-sm">
+								取消
+							</button>
+						</td>
+					</tr>
+				</table>
+			</form>
+				<div style=" width: 100%; background:#F4F0C1;color:#666;text-align: left;padding:3px;padding-left:10px; border-radius: 12px; margin-top: 10px;">
+					<ul>
+						<li style="color:black;font-size: 13px; font-weight: bold; margin-top: 10px;">注意事项：</li>
+						<li style="margin-top: 5px;">1.所有转帐请认准[小明]，并请复制帐号后粘贴使用!</li>
+						<li style="margin-top: 5px;">2.转帐时请备注你的试福街用户名及用途!</li>
+						<li style="margin-top: 5px;">3.为了更加安全，推荐使用银行转帐!</li>
+						<li style="margin-top: 5px;">农业银行 6228480328888888888 小明</li>
+						<li style="margin-top: 5px;">建设银行 6217001546666666666 小明</li>
+						<li style="margin-top: 5px;">工商银行 6212261279999999999 小明</li>
+						<li style="margin-top: 5px;">支 付 宝 baobeijie@266.com 小明(慎用)</li>
+					</ul>
+				</div>
+				</div>
+			</div>
+		</div>
+		<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-3">
+			<div class="am-modal-dialog">
+				<div class="am-modal-hd">提现
+					<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+				</div>
+				<form action="{:U('Home/SJMoney/deposit')}" method="post">
+					<div class="">
+						请输入提款金额：
+						<input type="number" name="money" id="money" />
+						<br /><span style="font-size: 12px; color: forestgreen;">提现金额不得大于总金额</span>
+					</div>
+					<input id="qr" style="font-family: '微软雅黑'; font-size: 13px; border-radius:5px ; margin-top: -8px;" class="am-btn-danger am-btn-xs" type="submit" value="确认" />
+				</form>
+			</div>
+		</div>
+</block>
+
+<block name="area_footer">
+	<script type="text/javascript">
+		$(function(){
+				$('#loc_province').change(function(){
+					var sheng=$('#loc_province option:selected').text();
+					$('.sheng').val(sheng);
+				})
+				$('#loc_city').change(function(){
+					var shi=$('#loc_city option:selected').text();
+					$('.shi').val(shi);
+				})
+				$('#loc_town').change(function() {
+				//$('input[@name=location_id]').val($(this).val());
+				var qu=$('#loc_town option:selected').text();
+							//var qu=$('#loc_town').select2('data').text
+							//alert(qu);
+				$('.qi').val(qu);
+		
+				})
+				$('#tixian').click(function(){
+					if( {$coins}  <1){
+						alert('不能提现，提现金额最低为1元');
+					}
+				})
+				$('#qr').click(function(){
+					if($('#money').val()>{$coins}){
+				  		alert('你还没有这么多钱！！');
+				  		return false;
+					}
+				})
+				 $('#doc-form-file').on('change', function() {
+			      var fileNames = '';
+			      $.each(this.files, function() {
+			        fileNames += '<span class="am-badge">' + this.name + '</span> ';
+			      });
+			      $('#file-list').html(fileNames);
+			    });
+				
+			})
+	</script>
+
+</block>
