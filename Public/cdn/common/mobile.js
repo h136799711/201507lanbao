@@ -1,5 +1,3 @@
-
-
 /**
  * 手机端通用js文件
  * @param {Object} txt
@@ -96,90 +94,6 @@ $(window).load(function() {
 });
 
 $(function() {
-	
-	
-		function redirectTo(url) {
-			window.location.href = url;
-		}
-	
-		function alertTODO(msg) {
-				msg = msg || "此功能未实现";
-	
-				$.scojs_message(msg, $.scojs_message.TYPE_OK);
-	
-			}
-			//进入全屏
-	
-		function requestFullScreen() {
-				var de = document.documentElement;
-				if (de.requestFullscreen) {
-					de.requestFullscreen();
-				} else if (de.mozRequestFullScreen) {
-					de.mozRequestFullScreen();
-				} else if (de.webkitRequestFullScreen) {
-					de.webkitRequestFullScreen();
-				}
-			}
-			//退出全屏
-	
-		function exitFullscreen() {
-			var de = document;
-			if (de.exitFullscreen) {
-				de.exitFullscreen();
-			} else if (de.mozCancelFullScreen) {
-				de.mozCancelFullScreen();
-			} else if (de.webkitCancelFullScreen) {
-				de.webkitCancelFullScreen();
-			}
-		}
-		
-		function selectall(that,sel){
-			if($(that).prop('checked')){
-				$(sel).prop('checked',true);
-			}else{
-				$(sel).prop('checked',false);			
-			}
-		}
-	
-		window.myUtils = {
-			redirectTo: redirectTo,
-			alertTODO: alertTODO,
-			exitFullscreen: exitFullscreen,
-			requestFullscreen: requestFullScreen,
-			selectall:selectall,
-			ajaxpost:function ajaxpost(that, target, query) {
-					$(that).button("loading");
-					$.post(target, query).always(function() {
-						setTimeout(function(){
-								$(that).button("reset");
-							},1400);
-					}).done(function(data) {
-						if (data.status == 1) {
-							if (data.url) {
-								$.scojs_message(data.info + ' 页面即将自动跳转~', $.scojs_message.TYPE_OK);
-							} else {
-								$.scojs_message(data.info, $.scojs_message.TYPE_OK);
-							}
-							setTimeout(function() {
-								if (data.url) {
-									location.href = data.url;
-								} else if ($(that).hasClass('no-refresh')) {} else {
-									location.reload();
-								}
-							}, 1500);
-						} else {
-	
-							$.scojs_message(data.info, $.scojs_message.TYPE_OK);
-							setTimeout(function() {
-								if (data.url) {
-									location.href = data.url;
-								} else {}
-							}, 1500);
-						}
-					});
-				}
-		};
-		
 		if($.AMUI && $.AMUI.progress){
 			$.AMUI.progress.start();//.start();
 		}
@@ -228,25 +142,19 @@ $(function() {
 			return false;
 		}); //END ajax-get
 		
-		$('.validateForm').validator({  validateOnSubmit: false,});
-		
 		//依赖jquery，scojs,
 		//ajax post submit请求
 		$('.ajax-post').click(function() {
 			console.log("ajax-post");
 			var target, query, form;
 			var target_form = $(this).attr('target-form');
-			if(typeof target_form === "undefined" || target_form.length == 0){
-				console.error("缺少target-form属性!");
-				return ;
-			}
 			var that = this;
 			var need_confirm = false;
 			if (($(this).attr('type') == 'submit') || (target = $(this).attr('href')) || (target = $(this).attr('url'))) {
 				form = $('.' + target_form);
-				if ($.AMUI && $.AMUI.validator && form.hasClass("validateForm")) {
-
-					if (form.find("input.am-field-error").length > 0) {
+				
+				if ($.validator && (form.hasClass("validate-form") || form.hasClass("validateForm"))) {
+					if (!form.valid()) {
 						alertMsg('表单验证不通过！');
 						return false;
 					}

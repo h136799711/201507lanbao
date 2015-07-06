@@ -12,7 +12,45 @@ use Tool\Model\AreaModel;
 
 
 class AreaApi extends Api{
-	
+
+
+    /**
+     * 查询，不分页
+     */
+    const QUERY_NO_PAGING = "Tool/City/queryNoPaging";
+    /**
+     * 添加
+     */
+    const ADD = "Tool/City/add";
+    /**
+     * 保存
+     */
+    const SAVE = "Tool/City/save";
+    /**
+     * 保存根据ID主键
+     */
+    const SAVE_BY_ID = "Tool/City/saveByID";
+
+    /**
+     * 删除
+     */
+    const DELETE = "Tool/City/delete";
+
+    /**
+     * 查询
+     */
+    const QUERY = "Tool/City/query";
+
+    /**
+     * 查询一条数据
+     */
+    const GET_INFO = "Tool/City/getInfo";
+
+    /**
+     * GET_LIST_BY_CITY_ID
+     */
+    const GET_LIST_BY_CITY_ID = "Tool/City/getListByCityID";
+
 	protected function _init(){
 		$this->model = new AreaModel();
 	}

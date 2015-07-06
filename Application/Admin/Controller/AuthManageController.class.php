@@ -125,13 +125,12 @@ class AuthManageController extends AdminController {
 
 		$map = array();
 		$map_access = array();
-		$memberMap = array();
 		
 		$groupid = I('groupid', -1);
 		//模块标识
 		$modulename = I('modulename', '');
 
-		$map['status'] = 1;
+		$map['status'] = array('egt', 0);
 		if ($groupid != -1) {
 			$map['id'] = $groupid;
 		}
@@ -141,10 +140,10 @@ class AuthManageController extends AdminController {
 			$map_access['module'] = $modulename;
 		}
 
-		$memberMap['status'] = 1;
+		$memberMap = array();
 
 		//用户组
-		$result = apiCall("Admin/AuthGroup/queryNoPaging", array($memberMap));
+		$result = apiCall("Admin/AuthGroup/queryNoPaging", array($map));
 		$map_access['type'] = 2;
 
 		//菜单列表
@@ -214,7 +213,7 @@ class AuthManageController extends AdminController {
 		foreach ($tree as $vo) {
 			$ul .= "<li ";
 			$childUL['allchecked'] = true;
-			if (is_array($vo['_child']) && count($vo['_child']) > 0) {
+			if (is_array($vo['_child'])) {
 				$childUL = $this -> createTree($vo['_child'],$menus);
 			}
 			
@@ -232,9 +231,8 @@ class AuthManageController extends AdminController {
 				$jstree = '{ "selected" : ' . $selected . ', "opened" : false }';
 			}
 			$ul .= "data-jstree='".$jstree."' id=\"jstree_" . $vo['id'] . "\" >" . $vo['title'];
-			if(is_array($vo['_child']) && count($vo['_child']) > 0){
-				$ul .= $childUL['child'];
-			}
+			
+			$ul .= $childUL['child'];
 			$ul .= "</li>";
 		}
 

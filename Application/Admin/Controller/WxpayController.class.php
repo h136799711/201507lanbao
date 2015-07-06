@@ -8,7 +8,8 @@
 
 namespace Admin\Controller;
 use \Common\Api\Wxpay;
-use \Common\Api\Wxpay\WxPayApi;
+use Common\Api\Wxpay\OrderQuery;
+use Shop\Api\OrdersApi;
 
 class WxpayController extends AdminController {
 	
@@ -19,7 +20,7 @@ class WxpayController extends AdminController {
 		}
 		$config = C('WXPAY_CONFIG');
 		
-		$query = new \Common\Api\Wxpay\OrderQuery($config);
+		$query = new OrderQuery($config);
 		
 		$orderQueryResult = ($query->queryByOutTradeNo($out_trade_no));
 		
@@ -60,7 +61,7 @@ class WxpayController extends AdminController {
 			$appsecrect = "";
 			$config = C("WXPAY_CONFIG");
 			//使用订单查询接口
-			$orderQuery = new \Common\Api\OrderQueryApi($config);
+			$orderQuery = new OrderQueryApi($config);
 			//设置必填参数
 			//appid已填,商户无需重复填写
 			//mch_id已填,商户无需重复填写
@@ -114,7 +115,7 @@ class WxpayController extends AdminController {
 				//使用对账单接口
 				$config = C("WXPAY_CONFIG");
 				//使用订单查询接口
-				$downloadBill = new \Common\Api\DownloadBillApi($config);
+				$downloadBill = new DownloadBillApi($config);
 				//设置对账单接口参数
 				//设置必填参数
 				//appid已填,商户无需重复填写
@@ -204,10 +205,8 @@ class WxpayController extends AdminController {
 			$result['rows'][] = $row;
 		}
 		if ($cnt - 2 > 0) {
-			$footer_title = split(",", $table[$cnt - 2]);
-			$footer_cont = split(",", $table[$cnt - 1]);
-			//			dump($footer_title);
-			//			dump($footer_cont);
+			$footer_title = explode(",", $table[$cnt - 2]);
+			$footer_cont = explode(",", $table[$cnt - 1]);
 			$result['footer'] = array("title" => $footer_title, "cont" => $footer_cont);
 		}
 		return $result;
@@ -215,7 +214,7 @@ class WxpayController extends AdminController {
 	
 	private function check($orderid){
 		$map = array("orderid"=>$orderid,"wxaccount"=>getWxAccountID());
-		$result = apiCall("Admin/Orders/getInfo", array($map));
+		$result = apiCall(OrdersApi::GET_INFO, array($map));
 		if($result['status'] && is_array($result['info'])){
 			return true;
 		}else{

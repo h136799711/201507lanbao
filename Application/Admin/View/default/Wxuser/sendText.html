@@ -17,7 +17,7 @@
 					<label class="control-label col-lg-2 col-md-2">选择用户</label>
 					<div class="col-lg-10 col-md-10">
 						<select style="width:220px;padding: 10px 15px;font-size: 15px;line-height: 1.42857143;" id="user_select2" name="uid" class="form-control">
-							<option></option>
+							<option value="{$vo.id}">{$vo.nickname}</option>
 						</select>
 					</div>
 				</div>
@@ -30,8 +30,10 @@
 				<div class="form-group">
 					<label class="control-label col-lg-2 col-md-2">&nbsp;</label>
 					<div class="col-lg-10 col-md-10">
-						<a href="{:U('Admin/Wxuser/sendText')}" class="btn btn-sm ajax-post btn-primary" target-form="sendForm" >发送</a>
-						<a href="{:U('Admin/Wxuser/sendText',array('qf'=>1))}" class="btn btn-sm ajax-post btn-primary" target-form="sendForm" >群发</a>
+                        <a href="{:U('Admin/Wxuser/sendText')}" class="btn btn-sm ajax-post btn-primary" target-form="sendForm" ><i class="fa fa-send"></i>发送</a>
+
+                        <a href="javascript:history.back(-1);" class="btn btn-sm btn-default" ><i class="fa fa-reply"></i>返回</a>
+                        <!--<a href="{:U('Admin/Wxuser/sendText',array('qf'=>1))}" class="btn btn-sm ajax-post btn-primary" target-form="sendForm" >群发</a>-->
 					</div>
 				</div>
 		</form>

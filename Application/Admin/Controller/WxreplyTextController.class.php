@@ -8,6 +8,9 @@
 
 namespace Admin\Controller;
 
+use Weixin\Api\WxreplyNewsApi;
+use Weixin\Api\WxreplyTextApi;
+
 class WxreplyTextController extends  AdminController{
 	
 	protected function _initialize(){
@@ -19,15 +22,13 @@ class WxreplyTextController extends  AdminController{
 	 */
 	private function getAllKeywords(){
 		$keywords = array();
-		
-		$textKeywords = apiCall("Admin/WxreplyText/getKeywords",array(getWxAccountID()));
-		$newsKeywords = apiCall("Admin/WxreplyNews/getKeywords",array(getWxAccountID()));
-		
+		$textKeywords = apiCall(WxreplyTextApi::GET_KEYWORDS,array());
+		$newsKeywords = apiCall(WxreplyNewsApi::GET_KEYWORDS,array());
 		if($textKeywords['status']){
 			$keywords = $textKeywords['info'];
 		}
 		if($newsKeywords['status']){
-			$keywords = array_merge((array)$newsKeywords['info'],(array)$keywords);
+			$keywords = array_merge($keywords,$newsKeywords['info']);
 		}
 		return $keywords;
 	}
@@ -37,15 +38,16 @@ class WxreplyTextController extends  AdminController{
 		$map = array('wxaccount_id'=>getWxAccountID());
 		$page = array('curpage' => I('get.p', 0), 'size' => C('LIST_ROWS'));
 		$order = " updatetime desc ";
-		$wxaccount = getWxaccount();
 		//
-		$result = apiCall('Admin/WxreplyText/query',array($map,$page,$order));
+		$result = apiCall(WxreplyTextApi::QUERY,array($map,$page,$order));
 		if($result['status']){
 			$this->assign("keywords",$keywords);
 			$this->assign("show",$result['info']['show']);
 			$this->assign("list",$result['info']['list']);
 			$this->display();
-		}
+		}else{
+            $this->error($result['info']);
+        }
 	}
 	
 	/**
@@ -61,7 +63,7 @@ class WxreplyTextController extends  AdminController{
 						"content"=>I('post.content','',"html_entity_decode"),
 						"wxaccount_id"=> getWxAccountID(),//TODO:暂支持单公众号所以此处公众号ID写死
 						);
-			$result = apiCall("Admin/WxreplyText/add",array($entity));
+			$result = apiCall(WxreplyTextApi::ADD,array($entity));
 			if($result['status']){
 				$this->success(L('RESULT_SUCCESS'),U('Admin/WxreplyText/index'));
 			}else{
@@ -77,7 +79,7 @@ class WxreplyTextController extends  AdminController{
 	public function edit(){
 		if(IS_GET){
 			$id = I('get.id',0);
-			$result = apiCall("Admin/WxreplyText/getInfo",array(array('id'=>$id)));
+			$result = apiCall(WxreplyTextApi::GET_INFO,array(array('id'=>$id)));
 			if($result['status']){
 				$this->assign("textVO",$result['info']);
 				$this->display();
@@ -93,7 +95,7 @@ class WxreplyTextController extends  AdminController{
 						"content"=>I('post.content','',"html_entity_decode"),
 						);
 			
-			$result = apiCall("Admin/WxreplyText/saveByID",array($id,$entity));
+			$result = apiCall(WxreplyTextApi::SAVE_BY_ID,array($id,$entity));
 			if($result['status']){
 				$this->success(L('RESULT_SUCCESS'),U('Admin/WxreplyText/index'));
 			}else{

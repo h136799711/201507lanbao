@@ -28,7 +28,7 @@ class DatatreeController extends AdminController{
 		$this->assign('parent',$this->parent);
 		$this->assign('preparent',$this->preparent);
 	}
-	
+		
 	public function index(){
 		$name = I('name','');
 		$map = array('parentid'=>$this->parent);
@@ -108,7 +108,6 @@ class DatatreeController extends AdminController{
 			}
 			$entity = array(
 				'name'=>I('name',''),
-				'hidden_value'=>I('hidden_value',''),
 				'notes'=>I('notes',''),
 				'sort'=>I('sort',''),
 				'level'=>$level,
@@ -116,7 +115,6 @@ class DatatreeController extends AdminController{
 				'parentid'=>$this->parent,
 				'code'=>I('code',''),
 				'iconurl'=>I('iconurl',''),
-				'uid'=>UID,
 			);
 			
 			$result = apiCall("Admin/Datatree/add", array($entity));
@@ -163,7 +161,6 @@ class DatatreeController extends AdminController{
 		}else{
 			
 			$entity = array(
-				'hidden_value'=>I('hidden_value',''),
 				'name'=>I('name',''),
 				'notes'=>I('notes',''),
 				'sort'=>I('sort',''),

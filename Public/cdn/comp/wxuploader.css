@@ -1,6 +1,9 @@
 /**
  * 图片上传样式
  */
+.xdsoft_datetimepicker{
+    z-index: 100000001;
+}
 .modal-dialog {
 	z-index: 10000000;
 	width: 760px;

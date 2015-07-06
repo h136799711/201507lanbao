@@ -23,34 +23,27 @@
 			<!-- 带验证 form -->
 			<form class="form-horizontal well validateForm">
 				<fieldset>
-					<legend>文章添加
+					<legend>
 						</legend>
-					<div class="form-group">
-						<label for="btns" class="col-md-2 col-lg-2 control-label">&nbsp;</label>
-						<div class="col-lg-10 col-md-10">
-							<a target-form="validateForm" onclick="return getData();" class="ajax-post btn btn-primary" href="{:U('Admin/Post/add')}" autofocus="autofocus"><i class="fa fa-save"></i> {:L('BTN_SAVE')}</a>
-							<a class="btn btn-default" href="{:U('Admin/Post/index')}"><i class="fa fa-reply"></i>返回</a>
-						</div>
-					</div>
 					<div class="form-group">
 						<label for="inputtitle" class="col-md-2 col-lg-2 control-label">文章标题</label>
 						<div class="col-md-10 col-lg-10">
-							<input type="text" class="required form-control input-normal" name="post_title" id="inputtitle" placeholder="{:L('PLACEHOLDER_TITLE')}">
-							<div class="help-block">(请输入文章标题,不要超过30个字)</div>
+							<input type="text" class="required form-control input-short" name="post_title" id="inputtitle" placeholder="{:L('PLACEHOLDER_TITLE')}">
+							<div class="help-block">(请输入文章标题)</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="inputtitle" class="col-md-2 col-lg-2 control-label">文章状态</label>
 						<div class="col-md-10 col-lg-10">
 							<label class="radio-inline">
-								<input type="radio" name="post_status" value="publish" checked="checked" />正式发布
+								<input type="radio" name="post_status" value="publish" checked="checked" />立即发布
 							</label>
 							<label class="radio-inline">
 								<input type="radio" name="post_status" value="draft" />草稿
 							</label>
 						</div>
 					</div>
-					<div class="form-group  hide">
+					<div class="form-group  am-hide">
 						<label for="inputtitle" class="col-md-2 col-lg-2 control-label">可否评论</label>
 						<div class="col-md-10 col-lg-10">
 							<label class="radio-inline">
@@ -62,15 +55,6 @@
 							<label class="radio-inline">
 								<input type="radio" name="comment_status" value="registered_only" />仅会员可评论
 							</label>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputpost_excerpt" class="col-md-2 col-lg-2 control-label">文章分类</label>
-						<div class="col-md-10 col-lg-10">
-							<select name="post_category" class="form-control input-normal " >
-								{:W("Partials/datatree",array(getDatatree('POST_CATEGORY'),true))}
-							</select>
-							<div class="help-block">(请选择文章分类)</div>
 						</div>
 					</div>
 					<div class="form-group">
@@ -94,11 +78,20 @@
 					<div class="form-group">
 						<label for="inputpost_excerpt" class="col-md-2 col-lg-2 control-label">文章摘要</label>
 						<div class="col-md-10 col-lg-10">
-							<textarea name="post_excerpt" rows="5"  class="required form-control"></textarea>
+							<textarea name="post_excerpt" rows="5"  class="required form-control input-normal"></textarea>
 							<div class="help-block">(请输入文章摘要)</div>
 						</div>
 					</div>
 					
+					<div class="form-group">
+						<label for="inputpost_excerpt" class="col-md-2 col-lg-2 control-label">文章分类</label>
+						<div class="col-md-10 col-lg-10">
+							<select name="post_category" >
+								{:W("Partials/datatree",array(getDatatree('POST_CATEGORY'),true))}
+							</select>
+							<div class="help-block">(请选择文章分类)</div>
+						</div>
+					</div>
 					<div class="form-group">
 						<label for="inputtitle" class="col-md-2 col-lg-2 control-label">文章内容</label>
 						<div class="col-md-10 col-lg-10">							

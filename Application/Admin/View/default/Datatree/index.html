@@ -40,17 +40,17 @@
 					<thead>
 						<tr>
 							<th>
-								<input type="checkbox" class="selectall" onclick="myUtils.selectall(this,'.selectitem');" />编号
+								<input type="checkbox" class="selectall" onclick="myUtils.selectall(this,'.selectitem');" />
 							</th>
 							<th>
 								名称
 							</th>
-							<th>
+							<!--<th>
 								父级路径
-							</th>
-							<th>
+							</th>-->
+							<!--<th>
 								所处层级
-							</th>
+							</th>-->
 							<th>
 								添加时间
 							</th>
@@ -68,16 +68,16 @@
 							<volist name="list" id="vo">
 								<tr>
 									<td>
-										<input type="checkbox" value="{$vo.id}" name="ids[]" class="selectitem" />{$vo.id}</td>
+										<input type="checkbox" value="{$vo.id}" name="ids[]" class="selectitem" /></td>
 									<td>
 										<a href="{:U('Admin/Datatree/index',array('parent'=>$vo['id']))}">{$vo.name}</a>
 									</td>
-									<td>
+									<!--<td>
 										{$vo.parents}
-									</td>
-									<td>
+									</td>-->
+									<!--<td>
 										{$vo.level}
-									</td>
+									</td>-->
 									<td>
 										{$vo.createtime|date='Y-m-d h:i:s',###}
 									</td>

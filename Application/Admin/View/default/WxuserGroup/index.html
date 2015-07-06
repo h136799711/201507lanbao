@@ -11,7 +11,9 @@
 		{:W('Menus/left')}
 		<div class="admin-main-content">
 			{:W('Menus/breadcrumb')}
-			
+			    <div class="help-block">
+                    注意 : 每个用户只能属于一个会员组。
+                </div>
 			<!-- 操作按钮 -->
 				<div class="btn-controls">
 					<a class="btn btn-primary btn-sm" href="{:U('Admin/WxuserGroup/add')}"><i class="fa fa-plus"></i>{:L('BTN_ADD')}</a>
@@ -60,11 +62,9 @@
 										<a href="{:U('WxuserGroup/subMember',array('groupid'=>$vo['id']))}" class="btn btn-default btn-sm"><i class="fa fa-users"></i>下属会员管理</a>
 										<a href="{:U('WxuserGroup/powerEdit',array('groupid'=>$vo['id']))}" class="btn btn-default btn-sm"><i class="fa fa-gavel"></i>权限编辑</a>
 										<a href="{:U('WxuserGroup/edit',array('id'=>$vo['id']))}" class="btn btn-default btn-sm"><i class="fa fa-edit"></i>{:L('BTN_EDIT')}</a>
-										<eq name="vo.id" value="0">
-											<span class="btn btn-danger btn-sm disabled">无法删除</span>
-											<else/>
+										<if condition="is_administrator()">
 										<a href="{:U('WxuserGroup/delete',array('id'=>$vo['id']))}" class="btn btn-danger btn-sm ajax-get confirm"><i class="fa fa-trash"></i>删除</a>
-										</eq>
+										</if>
 									</td>
 								</tr>
 

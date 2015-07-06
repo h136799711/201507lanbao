@@ -159,14 +159,7 @@ abstract class Api {
 
 		return $this -> save(array('id' => $ID), $entity);
 	}
-	/**
-	 * 根据id保存数据
-	 */
-	public function saveByIDd($ID, $entity) {
-		unset($entity['id']);
 
-		return $this -> save(array('uid' => $ID), $entity);
-	}
 	/**
 	 * 数字类型字段有效
 	 * @param $map 条件
@@ -182,37 +175,6 @@ abstract class Api {
 		} else {
 			return $this -> apiReturnSuc($result);
 		}
-	}
-	
-	/**
-	 * 返回最大值
-	 * @param $map 条件
-	 * @param $field 统计字段
-	 */
-	public function max($map,$field){
-		$result = $this -> model -> where($map) -> max($field);
-		if ($result === false) {
-			$error = $this -> model -> getDbError();
-			return $this -> apiReturnErr($error);
-		} else {
-			return $this -> apiReturnSuc($result);
-		}
-	}
-	/*
-	 * 返回最小值
-	 * @param $map 条件
-	 * @param $field 统计字段
-	 */
-	public function min($map,$field){
-		
-		$result = $this -> model -> where($map) -> min($field);
-		if ($result === false) {
-			$error = $this -> model -> getDbError();
-			return $this -> apiReturnErr($error);
-		} else {
-			return $this -> apiReturnSuc($result);
-		}
-		
 	}
 
 	/**
@@ -337,7 +299,36 @@ abstract class Api {
 			$query = $query->field($fields);
 		}
 		$list = $query -> select();
-		
+		//旧
+//		if (is_null($map)) {
+//			if ($order === false) {
+//				if ($fields === false) {
+//					$list = $this -> model -> select();
+//				} else {
+//					$list = $this -> model -> field($fields) -> select();
+//				}
+//			} else {
+//				if ($fields === false) {
+//					$list = $this -> model -> order($order) -> select();
+//				} else {
+//					$list = $this -> model -> field($fields) -> order($order) -> select();
+//				}
+//			}
+//		} elseif ($order === false) {
+//			if ($fields === false) {
+//				$list = $this -> model -> where($map) -> select();
+//			} else {
+//				$list = $this -> model -> field($fields) -> where($map) -> select();
+//			}
+//		} else {
+//			if ($fields === false) {
+//				$list = $this -> model -> where($map) -> order($order) -> select();
+//			} else {
+//				$list = $this -> model -> field($fields) -> where($map) -> order($order) -> select();
+//			}
+//
+//		}
+
 		if ($list === false) {
 			$error = $this -> model -> getDbError();
 			return $this -> apiReturnErr($error);
@@ -347,13 +338,14 @@ abstract class Api {
 
 	}
 
-	/**
-	 * query
-	 * @param map 查询条件
-	 * @param page 分页参数
-	 * @param order 排序参数
-	 * @param params 点击分页时带参数
-	 */
+    /**
+     * query
+     * @param map 查询条件
+     * @param page 分页参数
+     * @param order 排序参数
+     * @param params 点击分页时带参数
+     * @return array
+     */
 	public function query($map = null, $page = array('curpage'=>0,'size'=>10), $order = false, $params = false, $fields = false) {
 		$query = $this->model;
 		if(!is_null($map)){

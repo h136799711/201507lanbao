@@ -8,6 +8,8 @@
 
 namespace Admin\Controller;
 
+use Weixin\Api\WxaccountApi;
+
 class WxaccountController extends AdminController{
 	
 	
@@ -27,24 +29,23 @@ class WxaccountController extends AdminController{
 		$map = array('uid'=>UID);
 		$page = array('curpage'=>I('get.p',0),'size'=>C("LIST_ROWS"));
 		$params = array();
-		$list = apiCall("Admin/Wxaccount/query", array($map,$page,"createtime desc",$params));
+		$list = apiCall(WxaccountApi::QUERY, array($map,$page,"createtime desc",$params));
 		if($list['status']){
 			$this->assign("list",$list['info']['list']);
 			$this->assign("show",$list['info']['show']);
 			$this->display();
 		}
 	}
-	
+
 	/**
 	 * 首次关注时响应关键词管理
 	 */
 	public function saveFirstResp(){
-		$keyword = I('post.ss_keyword','');			
-//		$config = array("SS_KEYWORD"=>$keyword);
-//		$result = apiCall("Admin/Config/set", array($config));
-		$result = apiCall("Admin/Wxaccount/saveByID",array(getWxAccountID(),array("ss_keyword"=>$keyword)));
-		
-		if($result['status']){
+		$keyword = I('post.ss_keyword','');
+
+        $result = apiCall(WxaccountApi::SAVE_BY_ID,array(getWxAccountID(),array("ss_keyword"=>$keyword)));
+
+        if($result['status']){
 			$this->success(L('RESULT_SUCCESS'));
 		}else{
 			$this->error($result['info']);
@@ -58,7 +59,7 @@ class WxaccountController extends AdminController{
 		
 		if(IS_GET){
 			$map = array('id'=>getWxAccountID());
-			$result = apiCall("Admin/Wxaccount/getInfo",array($map));
+			$result = apiCall(WxaccountApi::GET_INFO,array($map));
 			
 			if($result['status']){
 				$this->assign("wxaccount",$result['info']);
@@ -76,8 +77,7 @@ class WxaccountController extends AdminController{
 	public function edit(){
 		if(IS_GET){
 			$map = array('id'=>getWxAccountID());
-			$result = apiCall("Admin/Wxaccount/getInfo",array($map));
-			
+			$result = apiCall(WxaccountApi::GET_INFO,array($map));
 			if($result['status']){
 				$this->assign("wxaccount",$result['info']);
 				$this->display();
@@ -107,14 +107,12 @@ class WxaccountController extends AdminController{
 				'headerpic'=>I('post.headerpic',''),
 				'qrcode'=>I('post.qrcode',''),
 				'wxuid'=>I('post.wxuid'),
-//				'uid'=>UID,
 				'encodingAESKey'=>$EncodingAESKey,
 			);
 			
 			if(!empty($id) && $id > 0){
-//				dump("save");
-//				$entity['id'] = $id;
-				$result = apiCall('Admin/Wxaccount/saveByID', array($id, $entity));
+
+				$result = apiCall(WxaccountApi::SAVE_BY_ID, array($id, $entity));
 				if ($result['status'] === false) {
 					LogRecord('INFO:' . $result['info'], '[FILE] ' . __FILE__ . ' [LINE] ' . __LINE__);
 					$this -> error($result['info']);
@@ -124,7 +122,7 @@ class WxaccountController extends AdminController{
 			}else{
 				$entity['uid'] = UID;
 				$entity['token'] = $tokenvalue.time();			
-				$result = apiCall('Admin/Wxaccount/add', array($entity));
+				$result = apiCall(WxaccountApi::ADD, array($entity));
 				if ($result['status'] === false) {
 					LogRecord('INFO:' . $result['info'], '[FILE] ' . __FILE__ . ' [LINE] ' . __LINE__);
 					$this -> error($result['info']);
@@ -134,19 +132,6 @@ class WxaccountController extends AdminController{
 			}
 		}
 	}
-	
-	//private
-	private function randToken($length){
-		$token = '';
-		$strPol = "0123456789abcdefghijklmnopqrstuvwxyz";
-		$max = strlen($strPol)-1;
-		for($i=0;$i<$length;$i++){
-			$str.=$strPol[rand(0,$max)];//rand($min,$max)生成介于min和max两个数之间的一个随机整数
-		}
-		
-		return $token;
-	}
 
-	
 	
 }

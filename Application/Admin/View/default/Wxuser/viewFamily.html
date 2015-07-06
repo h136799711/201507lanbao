@@ -16,7 +16,20 @@
 				<div class="filter-controls">
 					<a class="btn btn-sm btn-default" href="{:U('Admin/Wxuser/index')}"><i class="fa fa-reply"></i>返回</a>
 				</div>
-				
+
+                <div class="filter-controls">
+                    <form class="searchForm form" action="{:U('Admin/Wxuser/viewFamily',array('id'=>I('get.id',-1)))}" method="post">
+                    <label class="radio-inline">
+                        <input class="level" <eq name="level" value="1">checked</eq> type="radio" name="level" id="inlineRadio1" value="1" >我的直属一级
+                    </label>
+                    <label class="radio-inline">
+                        <input class="level"  <eq name="level" value="2">checked</eq>  type="radio" name="level" id="inlineRadio2" value="2">我的二级
+                    </label>
+                    <label class="radio-inline">
+                        <input class="level"  <eq name="level" value="3">checked</eq>  type="radio" name="level" id="inlineRadio3" value="3">我的三级
+                    </label>
+                    </form>
+                </div>
 				<table class="table table-striped table table-hover  table-condensed">
 					<thead>
 						<tr>
@@ -72,5 +85,11 @@
 </block>
 
 <block name="area_footer">
-
+    <script type="text/javascript">
+        $(function(){
+            $(".level").click(function(){
+                $(".searchForm").submit();
+            })
+        })
+    </script>
 </block>

@@ -8,6 +8,10 @@
 
 namespace Admin\Controller;
 
+use Common\Api\WeixinApi;
+use Weixin\Api\WxaccountApi;
+use Weixin\Api\WxmenuApi;
+
 class WxmenuController extends AdminController {
 
 	public function test() {
@@ -20,7 +24,7 @@ class WxmenuController extends AdminController {
 		$page = array('curpage' => I('get.p', 0), 'size' => C('LIST_ROWS'));
 		$order = " sort desc ";
 		//
-		$result = apiCall('Admin/Wxmenu/query', array($map, $page, $order));
+		$result = apiCall(WxmenuApi::QUERY, array($map, $page, $order));
 		if ($result['status']) {
 			$this -> assign("show", $result['info']['show']);
 			$this -> assign("list", $result['info']['list']);
@@ -36,7 +40,7 @@ class WxmenuController extends AdminController {
 			//获取主菜单 $order = false, $fields
 			$map = array('wxaccount_id' => getWxAccountID(), 'pid' => 0);
 
-			$result = apiCall('Admin/Wxmenu/queryNoPaging', array($map, "sort desc", "name,id"));
+			$result = apiCall(WxmenuApi::QUERY_NO_PAGING, array($map, "sort desc", "name,id"));
 			if ($result['status']) {
 				$this -> assign("mainmenus", $result['info']);
 				$this -> display();
@@ -55,7 +59,7 @@ class WxmenuController extends AdminController {
 				$entity['type'] = 'click';
 			}
 
-			$result = apiCall("Admin/Wxmenu/add", array($entity));
+			$result = apiCall(WxmenuApi::ADD, array($entity));
 			if ($result['status']) {
 				$this -> success(L('RESULT_SUCCESS'), U('Admin/Wxmenu/index'));
 			} else {
@@ -69,7 +73,7 @@ class WxmenuController extends AdminController {
 		if (IS_GET) {
 
 			$id = I('get.id', 0);
-			$result = apiCall("Admin/Wxmenu/getInfo", array( array('id' => $id)));
+			$result = apiCall(WxmenuApi::GET_INFO, array( array('id' => $id)));
 
 			if ($result['status']) {
 				$this -> assign("menuVO", $result['info']);
@@ -79,7 +83,7 @@ class WxmenuController extends AdminController {
 			//获取主菜单 $order = false, $fields
 			$map = array('wxaccount_id' => getWxAccountID(), 'pid' => 0);
 
-			$result = apiCall('Admin/Wxmenu/queryNoPaging', array($map, "sort desc", "name,id"));
+			$result = apiCall(WxmenuApi::QUERY_NO_PAGING, array($map, "sort desc", "name,id"));
 			if ($result['status']) {
 				$this -> assign("mainmenus", $result['info']);
 				$this -> display();
@@ -98,7 +102,7 @@ class WxmenuController extends AdminController {
 			} else {
 				$entity['type'] = 'click';
 			}
-			$result = apiCall("Admin/Wxmenu/saveByID", array($id, $entity));
+			$result = apiCall(WxmenuApi::SAVE_BY_ID, array($id, $entity));
 			if ($result['status']) {
 				$this -> success(L('RESULT_SUCCESS'), U('Admin/Wxmenu/index'));
 			} else {
@@ -112,12 +116,12 @@ class WxmenuController extends AdminController {
 	public function deleteMenu() {
 		if (IS_POST) {
 
-			$result = apiCall("Admin/Wxaccount/getInfo", array( array('id' => getWxAccountID())));
+			$result = apiCall(WxaccountApi::GET_INFO, array( array('id' => getWxAccountID())));
 			if ($result['status']) {
 				$appid = $result['info']['appid'];
 				$appsecret = $result['info']['appsecret'];
 				
-				$weixinApi = new \Common\Api\WeixinApi($appid, $appsecret);
+				$weixinApi = new WeixinApi($appid, $appsecret);
 				$result = $weixinApi -> deleteMenu();
 				if ($result['status']) {
 					$this -> success(L("RESULT_SUCCESS"));
@@ -140,7 +144,7 @@ class WxmenuController extends AdminController {
 	public function sendToWXServer() {
 		if (IS_POST) {
 			$map = array('wxaccount_id' => getWxAccountID());
-			$result = apiCall('Admin/Wxmenu/queryNoPaging', array($map, "sort desc", "name,id,pid,menukey,url,type"));
+			$result = apiCall(WxmenuApi::QUERY_NO_PAGING, array($map, "sort desc", "name,id,pid,menukey,url,type"));
 			if ($result['status']) {
 				$menulist = $result['info'];
 				if (count($menulist) > 15) {
@@ -149,12 +153,12 @@ class WxmenuController extends AdminController {
 
 				$convertML = $this -> convertMenu($menulist);
 
-				$result = apiCall("Admin/Wxaccount/getInfo", array( array('id' => getWxAccountID())));
+				$result = apiCall( WxaccountApi::GET_INFO, array( array('id' => getWxAccountID())));
 				if ($result['status']) {
 					$appid = $result['info']['appid'];
 					$appsecret = $result['info']['appsecret'];
 
-					$weixinApi = new \Common\Api\WeixinApi($appid, $appsecret);
+					$weixinApi = new WeixinApi($appid, $appsecret);
 					
 					$result = $weixinApi -> createMenu($convertML);
 					if ($result['status']) {

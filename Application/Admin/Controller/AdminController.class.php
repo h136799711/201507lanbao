@@ -8,6 +8,7 @@
 
 namespace Admin\Controller;
 use Common\Controller\CheckLoginController;
+use Weixin\Api\WxaccountApi;
 
 class AdminController extends CheckLoginController {
 
@@ -16,14 +17,15 @@ class AdminController extends CheckLoginController {
 	protected $appsecret = "";
 	protected function _initialize() {
 		parent::_initialize();
+		
 		// 当前一级导航激活menu
-		if (I('get.activemenuid', 0) !== 0) {
-			session('activemenuid', I('get.activemenuid'));
+		if (I('get.activemenuid', 0) != 0) {
+			session('activemenuid', I('get.activemenuid',0));
 			session('activesubmenuid', 0);
 		}
 		// 当前三级导航
-		if (I('get.activesubmenuid', 0) !== 0) {
-			session('activesubmenuid', I('get.activesubmenuid'));
+		if (I('get.activesubmenuid', 0) != 0) {
+			session('activesubmenuid', I('get.activesubmenuid',0));
 		}
 		// 获取配置
 		$this -> getConfig();
@@ -34,7 +36,7 @@ class AdminController extends CheckLoginController {
 			// 是否是超级管理员
 			define('IS_ROOT', is_administrator());
 		}
-		
+
 		// 检测IP是否受限制
 		$this -> checkAllowIP();
 
@@ -53,7 +55,7 @@ class AdminController extends CheckLoginController {
 		$this->get_current_usermenu();
 		$this->getWxaccount();
 		$this -> assign("user", session("global_user"));
-		$this -> assign("wxaccount", session("user_"+UID+"_wxaccount"));
+		$this -> assign("wxaccount", session("wxaccount"));
 		
 	}
 
@@ -62,26 +64,6 @@ class AdminController extends CheckLoginController {
 	protected function exitIfError($result){
 		if(!$result['status']){
 			$this->error($result['info']);
-		}
-	}
-	
-	/**
-	 * 获取公众号信息
-	 */
-	private function getWxaccount(){
-		$wxaccountid = getWxAccountID();
-		if($wxaccountid == -1){
-			$map = array("uid"=>UID);
-			$result = apiCall("Admin/Wxaccount/getInfo",array($map));
-			if($result['status'] && is_array($result['info'])){
-				session("user_"+UID+"_wxaccount",$result['info']);
-				session("wxaccountid",$result['info']['id']);
-				session("appid",$result['info']['appid']);
-				session("appsecret",$result['info']['appsecret']);
-			}
-		}else{
-			$this->appid = session("appid");
-			$this->appsecret = session("appsecret");
 		}
 	}
 	
@@ -101,23 +83,20 @@ class AdminController extends CheckLoginController {
 		$menulist = "";
 		if ($result['status']) {
 			$group_ids = '';
-			if(is_array($result['info'])){
-				foreach ($result['info'] as $groupaccess) {
-					$group_ids .= $groupaccess['group_id'] . ',';
-				}
+			foreach ($result['info'] as $groupaccess) {
+				$group_ids .= $groupaccess['group_id'] . ',';
 			}
 			unset($map['uid']);
 			if (!empty($group_ids)) {
 				$map = array('id' => array('in', rtrim($group_ids, ",")));
-				$map['status'] = 1;//启用状态
 				$result = apiCall('Admin/AuthGroup/queryNoPaging', array($map));
-				
+
 				if ($result['status'] && is_array($result['info'])) {
-					
+					//TODO:未测试过多角色的情况下,menulist字段必须,号结尾
 					foreach ($result['info'] as $group) {
 						$menulist .= $group['menulist'];
 					}
-					//TODO: 对菜单ID$menulist做去重处理
+
 				}
 			} else {
 					
@@ -128,30 +107,50 @@ class AdminController extends CheckLoginController {
 		return $menulist;
 	}
 	
+	/**
+	 * 获取公众号信息
+	 */
+	private function getWxaccount(){
+		$wxaccountid = getWxAccountID();
+
+		if($wxaccountid == -1){
+			$map = array("uid"=>UID);
+			$result = apiCall(WxaccountApi::GET_INFO,array($map));
+
+			if($result['status'] && is_array($result['info'])){
+				session("wxaccount",$result['info']);
+				session("wxaccountid",$result['info']['id']);
+				session("appid",$result['info']['appid']);
+				session("appsecret",$result['info']['appsecret']);
+			}
+		}else{
+			$this->appid = session("appid");
+			$this->appsecret = session("appsecret");
+		}
+	}
 	
 	public function checkAuthority() {
-		//TODO: 不做API 权限检测
 		//是系统管理员则都可以访问
-//		if (IS_ROOT) {
-//			return true;
-//		}
-//		
-//		$access = $this -> accessControl();
-//		if (false === $access) {
-//			$this -> error('403:禁止访问');
-//		} elseif (null === $access) {
-//			//检测访问权限
-//			$rule = strtolower(MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME);
-//			if (!$this -> checkRule($rule, array('in', '1,2'))) {
-//				$this -> error('未授权访问!');
-//			} else {
-//				// 检测分类及内容有关的各项动态权限
-//				$dynamic = $this -> checkDynamic();
-//				if (false === $dynamic) {
-//					$this -> error('未授权访问!');
-//				}
-//			}
-//		}
+		if (IS_ROOT) {
+			return true;
+		}
+
+		$access = $this -> accessControl();
+		if (false === $access) {
+			$this -> error('403:禁止访问');
+		} elseif (null === $access) {
+			//检测访问权限
+			$rule = strtolower(MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME);
+			if (!$this -> checkRule($rule, array('in', '1,2'))) {
+				$this -> error('未授权访问!');
+			} else {
+				// 检测分类及内容有关的各项动态权限
+				$dynamic = $this -> checkDynamic();
+				if (false === $dynamic) {
+					$this -> error('未授权访问!');
+				}
+			}
+		}
 		//TODO:检测权限
 		return true;
 	}
@@ -167,10 +166,10 @@ class AdminController extends CheckLoginController {
 		if (!$Auth) {
 			$Auth = new \Think\Auth();
 		}
-		//TODO: 检测API访问
-		if (!$Auth -> check($rule, UID, 2, $mode)) {
-			return false;
-		}
+		//TODO: 暂时去除检测API访问
+//		if (!$Auth -> check($rule, UID, 2, $mode)) {
+//			return false;
+//		}
 
 		return true;
 	}
@@ -307,7 +306,7 @@ class AdminController extends CheckLoginController {
 		$result = apiCall("Admin/" . CONTROLLER_NAME . '/pretendDelete', array($map));
 
 		if ($result['status']) {
-			
+
 			$this -> success("删除成功！", U('Admin/' . CONTROLLER_NAME . '/index'));
 
 		} else {

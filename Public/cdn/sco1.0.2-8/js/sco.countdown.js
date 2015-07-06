@@ -32,10 +32,11 @@
 			;
 
 		left.s = until - js_current;
-
-		if (left.s < 0) {
+		if (left.s <= -2) {
 			return;
 		}
+
+
 		if (Math.floor(left.s / 86400) > 0) {
 			left.d = Math.floor(left.s / 86400);
 			left.s = left.s % 86400;
@@ -60,9 +61,10 @@
 			str += ' ' + left.m + data.strings.m;
 			started = true;
 		}
-		if (left.s > 0) {
+		if (left.s > 0 || left.s > -1) {
 			started = true;
 		}
+
 		if (started) {
 			str += ' ' + left.s + data.strings.s;
 			started = true;
@@ -95,6 +97,6 @@
 	};
 
 	$.fn[pluginName].defaults = {
-		strings: {d: 'd', h: 'h', m: 'm', s: 's'}
+		strings: {d: '天', h: '时', m: '分', s: '秒'}
 	};
 })(jQuery);

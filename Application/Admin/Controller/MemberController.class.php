@@ -7,23 +7,22 @@
 // |-----------------------------------------------------------------------------------
 namespace Admin\Controller;
 
+use Admin\Api\AuthGroupAccessApi;
+use Admin\Api\MemberApi;
+use Uclient\Api\UserApi;
+
 class MemberController extends AdminController {
 
 	public function index() {
 		$params = array();
 		
-		
-		$where['nickname'] = array('like', "%" . I('nickname', '', 'trim') . "%");		
-		$where['uid'] = I('nickname',-1);
-		$where['_logic'] = 'OR';
-		
-		$map['_complex'] = $where;
-		$map['status'] = array('neq',-1);
+		$map['nickname'] = array('like', "%" . I('nickname', '', 'trim') . "%");		
+		$map['uid'] = I('nickname',-1);
+		$map['_logic'] = 'OR';
 		
 		$page = array('curpage' => I('get.p'), 'size' => C('LIST_ROW'));
 		$order = " last_login_time desc ";
 		$params['nickname'] = I('nickname','','trim');
-		
 		$result = apiCall("Admin/Member/query", array($map, $page, $order));
 		
 		if ($result['status']) {
@@ -36,32 +35,6 @@ class MemberController extends AdminController {
 		}
 	}
 	
-	public function view(){
-		$id = I('get.id',0);
-		
-		$result = apiCall("Admin/Member/getInfo", array(array("uid"=>$id)));
-		
-		if(!$result['status']){
-			$this->error($result['info']);
-		}
-		$this->assign("userinfo",$result['info']);
-		
-		$result = apiCall("Uclient/User/getInfo", array($id));
-		if(!$result['status']){
-			$this->error($result['info']);
-		}
-		$this->assign("useraccount",$result['info']);
-		
-		$result = apiCall("Admin/AuthGroupAccess/queryGroupInfo", array($id));
-		if(!$result['status']){
-			$this->error($result['info']);
-		}
-		$this->assign("userroles",$result['info']);
-		
-		
-		$this->display();
-	}
-	
 	/**
 	 * 删除用户
 	 * 假删除
@@ -70,18 +43,7 @@ class MemberController extends AdminController {
 		if(is_administrator(I('uid',0))){
 			$this->error("禁止对超级管理员进行删除操作！");
 		}
-		
-		$result = apiCall("Admin/Member/pretendDelete", array(array('uid'=>I('uid',0))));
-		if(!$result['status']){
-			LogRecord($result['info'], __FILE__.__LINE__);
-		}
-		
-		$result = apiCall("Uclient/User/delete", array(I('uid',0)));
-		if(!$result['status']){
-			LogRecord($result['info'], __FILE__.__LINE__);
-		}
-
-		$this->success("删除成功～！");
+		parent::pretendDelete("uid");
 	}
 	/**
 	 * 启用
@@ -109,19 +71,17 @@ class MemberController extends AdminController {
 				$this->error("密码和重复密码不一致！");
 			}
 			
-			$orgids = array();
-			
 			/* 调用注册接口注册用户 */			
-			$result = apiCall("Uclient/User/register", array($username, $password, $email));
+			$result = apiCall(UserApi::REGISTER, array($username, $password, $email));
 
             if($result['status']){ //注册成功
-            		$entity = array(
+            	$entity = array(
 					'uid'=>$result['info'],
 					'nickname'=>$username,
 					'realname'=>'',
 					'idnumber'=>'',
 				);
-				$result = apiCall("Admin/Member/add", array($entity));
+				$result = apiCall(MemberApi::ADD, array($entity));
                 if(!$result['status']){
                     $this->error('用户添加失败！');
                 } else {
@@ -130,13 +90,7 @@ class MemberController extends AdminController {
             } else { //注册失败，显示错误信息
                 $this->error($result['info']);
             }
-			
-//			$entity = array(
-//				'username'=>I('username','','trim'),
-//				'password'=>$password,
-//				'email'=>I('email','','trim'),
-//			);
-//			parent::add($entity);
+
 		}else{
 			$this->display();
 		}
@@ -146,7 +100,7 @@ class MemberController extends AdminController {
 	 * 检测用户名是否已存在
 	 */
 	public function check_username($username){
-		$result = apiCall("Uclient/User/checkUsername",array($username));
+		$result = apiCall(UserApi::CHECK_USER_NAME,array($username));
 		if($result['status']){
 			echo "true";
 		}else{
@@ -158,7 +112,7 @@ class MemberController extends AdminController {
 	 * 检测用户名是否已存在
 	 */
 	public function check_email(){
-			$result = apiCall("Uclient/User/checkEmail",array($email));
+			$result = apiCall(UserApi::CHECK_EMAIL,array($email));
 		if($result['status']){
 			echo "true";
 		}else{
@@ -170,32 +124,51 @@ class MemberController extends AdminController {
 	 * 
 	 */
 	public function select(){
-		
+			
 		$map['nickname'] = array('like', "%" . I('q', '', 'trim') . "%");		
 		$map['uid'] = I('q',-1);
 		$map['_logic'] = 'OR';
 		$page = array('curpage'=>0,'size'=>20);
 		$order = " last_login_time desc ";
 		
-		$result = apiCall("Admin/Member/query", array($map,$page, $order,false,'uid,nickname'));
+		$result = apiCall(MemberApi::QUERY, array($map,$page, $order,false,'uid,nickname'));
 		
 		if($result['status']){
 			$list = $result['info']['list'];
 			
 			foreach($list as $key=>$g){
-				
-				if(is_administrator($list[$key]['uid'])){
-					unset($list[$key]);
-				}else{
-					$list[$key]['id']=$list[$key]['uid'];
-				}
+				$list[$key]['id']=$list[$key]['uid'];
 			}
 			
 			$this->success($list);
 		}	
 	
 	}
-	
-	
-	
+
+    public function view(){
+        $id = I('get.id',0);
+
+        $result = apiCall(MemberApi::GET_INFO, array(array("uid"=>$id)));
+        if(!$result['status']){
+            $this->error($result['info']);
+        }
+
+        $this->assign("userinfo",$result['info']);
+
+        $result = apiCall(UserApi::GET_INFO, array($id));
+
+        if(!$result['status']){
+            $this->error($result['info']);
+        }
+
+        $this->assign("useraccount",$result['info']);
+
+        $result = apiCall(AuthGroupAccessApi::QUERY_GROUP_INFO, array($id));
+        if(!$result['status']){
+            $this->error($result['info']);
+        }
+
+        $this->assign("userroles",$result['info']);
+        $this->display();
+    }
 }

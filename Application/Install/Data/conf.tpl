@@ -6,7 +6,14 @@
 
 return array(
 
-	'LOAD_EXT_CONFIG' => 'datatree,appmeta', 
+    //自动载入
+	'AUTOLOAD_NAMESPACE'=>array('Addons' => ADDON_PATH),
+    //开启数据库session
+    'SESSION_TYPE'=>'Db',
+    //指定session数据库表
+    'SESSION_TABLE'=>'common_session',
+
+	'LOAD_EXT_CONFIG' => 'datatree,appmeta,express', 
 	
 	//在线升级配置 APP_KEY,APP_ID,AUTH_DOMAIN
 	'UPGRADE_AUTH_KEY'=>'[APP_KEY]',//授权码，用于在线升级
@@ -20,10 +27,10 @@ return array(
 	// 程序版本
 	// DONE:移到数据库中
 	// 显示运行时间
-	'SHOW_RUN_TIME'=>true,
+	'SHOW_RUN_TIME'=>false,
 //	'SHOW_ADV_TIME'=>true,
 	// 显示数据库操作次数
-	'SHOW_DB_TIMES'=>true,
+	'SHOW_DB_TIMES'=>false,
 	// 显示操作缓存次数
 //	'SHOW_CACHE_TIMES'=>true,
 	// 显示使用内存

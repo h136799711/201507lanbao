@@ -8,12 +8,12 @@
 
 namespace Admin\Controller;
 
+use Shop\Api\BannersApi;
+
 class BannersController extends  AdminController{
 	
 	public function index(){
-		
-		
-		
+
 		$map = array();
 		$map = array('uid'=>UID);
 		$map['position'] = array("in","18,20");
@@ -21,7 +21,7 @@ class BannersController extends  AdminController{
 		$page = array('curpage' => I('get.p', 0), 'size' => C('LIST_ROWS'));
 		$order = " createtime desc ";
 		//
-		$result = apiCall('Admin/Banners/queryWithPosition', array($map, $page, $order, $params));
+		$result = apiCall(BannersApi::QUERY_WITH_POSITION, array($map, $page, $order, $params));
 		//
 		if ($result['status']) {
 			$this -> assign('show', $result['info']['show']);
@@ -59,7 +59,7 @@ class BannersController extends  AdminController{
 			);
 		
 			
-			$result = apiCall("Admin/Banners/add", array($entity));
+			$result = apiCall(BannersApi::ADD, array($entity));
 			
 			if(!$result['status']){
 				$this->error($result['info']);
@@ -74,7 +74,7 @@ class BannersController extends  AdminController{
 	public function edit(){
 		$id = I('id',0);
 		if(IS_GET){
-			$result = apiCall("Admin/Banners/getInfo", array(array('id'=>$id)));
+			$result = apiCall(BannersApi::GET_INFO, array(array('id'=>$id)));
 			if(!$result['status']){
 				$this->error($result['info']);
 			}
@@ -97,7 +97,7 @@ class BannersController extends  AdminController{
 			);
 		
 			
-			$result = apiCall("Admin/Banners/saveByID", array($id,$entity));
+			$result = apiCall(BannersApi::SAVE_BY_ID, array($id,$entity));
 			
 			if(!$result['status']){
 				$this->error($result['info']);

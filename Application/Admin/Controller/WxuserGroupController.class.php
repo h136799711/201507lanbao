@@ -8,6 +8,10 @@
 
 namespace Admin\Controller;
 
+use Admin\Api\GroupAccessApi;
+use Admin\Api\WxuserGroupApi;
+use Weixin\Api\WxuserApi;
+
 class WxuserGroupController extends  AdminController {
 	protected function _initialize() {
 		parent::_initialize();
@@ -20,7 +24,7 @@ class WxuserGroupController extends  AdminController {
 		$page = array('curpage' => I('get.p', 0), 'size' => C('LIST_ROWS'));
 		$order = " id asc ";
 		//
-		$result = apiCall('Admin/WxuserGroup/query', array($map, $page, $order));
+		$result = apiCall(WxuserGroupApi::QUERY, array($map, $page, $order));
 
 		//
 		if ($result['status']) {
@@ -39,7 +43,7 @@ class WxuserGroupController extends  AdminController {
 		} elseif (IS_POST) {
 			$entity = array('name' => I('post.name', ''), 'description' => I('post.description', ' '), );
 
-			$result = apiCall('Admin/WxuserGroup/addWithAccess', array($entity));
+			$result = apiCall(WxuserGroupApi::ADD_WITH_ACCESS, array($entity));
 			if ($result['status']) {
 				$this -> success(L('RESULT_SUCCESS'), U('Admin/WxuserGroup/index'));
 			} else {
@@ -54,8 +58,8 @@ class WxuserGroupController extends  AdminController {
 		if (IS_GET) {
 
 			$id = I('get.id', 0);
+			$result = apiCall(WxuserGroupApi::GET_INFO, array(array('id'=>$id)));
 
-			$result = apiCall('Admin/WxuserGroup/getInfo', array($id, $entity));
 			if ($result['status']) {
 				$this -> assign("vo", $result['info']);
 				$this -> display();
@@ -68,8 +72,9 @@ class WxuserGroupController extends  AdminController {
 			$id = I('post.id', 0);
 			$entity = array('name' => I('post.name', ''), 'description' => I('post.description', ' '), );
 
-			$result = apiCall('Admin/WxuserGroup/saveByID', array($id, $entity));
-			if ($result['status'] === false) {
+			$result = apiCall(WxuserGroupApi::SAVE_BY_ID, array($id, $entity));
+
+            if ($result['status'] === false) {
 				LogRecord('INFO:' . $result['info'], '[FILE] ' . __FILE__ . ' [LINE] ' . __LINE__);
 				$this -> error($result['info']);
 			} else {
@@ -81,10 +86,21 @@ class WxuserGroupController extends  AdminController {
 
 	public function powerEdit() {
 		if (IS_GET) {
-			$map = array('wxuser_group_id' => I('get.groupid', 0));
-			$result = apiCall('Admin/GroupAccess/getInfo', array($map));
+            $group_id = I('get.groupid', 0);
+			$map = array('wxuser_group_id' => $group_id);
+            $result = apiCall(GroupAccessApi::GET_INFO, array($map));
+
 			if ($result['status']) {
 				$this -> assign("access", $result['info']);
+
+                $result = apiCall(WxuserGroupApi::GET_INFO, array(array('id'=>$group_id)));
+
+                if(!$result['status']){
+                    $this->error($result['info']);
+                }
+
+                $this->assign("vo",$result['info']);
+
 				$this -> display();
 			} else {
 				LogRecord('INFO:' . $result['info'], '[FILE] ' . __FILE__ . ' [LINE] ' . __LINE__);
@@ -98,9 +114,10 @@ class WxuserGroupController extends  AdminController {
 			$entity = array(
 				'alloweddistribution'=>I('post.alloweddistribution',0),
 				'allowedcomment'=>I('post.allowedcomment',0),
+                'percent'=>(I('post.percent',0,'floatval')/100.0),
 			);
 			
-			$result = apiCall('Admin/GroupAccess/saveByID', array($id,$entity));
+			$result = apiCall(GroupAccessApi::SAVE_BY_ID, array($id,$entity));
 			
 			if ($result['status']) {
 				$this -> success(L('RESULT_SUCCESS'), U('Admin/WxuserGroup/index'));
@@ -116,7 +133,7 @@ class WxuserGroupController extends  AdminController {
 	public function delete($redirect_url = false) {
 		if (IS_GET) {
 			$id = I('get.id', 0);
-			$result = apiCall("Admin/Wxuser/countWxusers", array($id));
+			$result = apiCall(WxuserApi::COUNT_WXUSERS, array($id));
 
 			if ($result['status']) {
 				if ($result['info'] > 0) {
@@ -127,7 +144,7 @@ class WxuserGroupController extends  AdminController {
 				$this -> error($result['info']);
 			}
 
-			$result = apiCall('Admin/WxuserGroup/delWithAccess', array($id));
+			$result = apiCall(WxuserGroupApi::DEL_WITH_ACCESS, array($id));
 			if ($result['status']) {
 				$this -> success(L('RESULT_SUCCESS'), U('Admin/WxuserGroup/index'));
 			} else {
@@ -153,7 +170,7 @@ class WxuserGroupController extends  AdminController {
 		$memberMap = array();
 
 		//用户组
-		$result = apiCall("Admin/WxuserGroup/queryNoPaging", array($map));
+		$result = apiCall(WxuserGroupApi::QUERY_NO_PAGING, array($map));
 		if ($result['status']) {
 			if ($groupid === -1) {
 				$groupid = $result['info'][0]['id'];
@@ -166,7 +183,7 @@ class WxuserGroupController extends  AdminController {
 			$memberMap['groupid'] = $groupid;
 			//查询用户信息
 			//TODO:
-			$result = apiCall("Admin/Wxuser/query", array($memberMap, array('curpage' => I('p', 0), 'size' => 10)));
+			$result = apiCall(WxuserApi::QUERY, array($memberMap, array('curpage' => I('p', 0), 'size' => 10)));
 			if ($result['status']) {
 				$this -> assign("show", $result['info']['show']);
 				$this -> assign("list", $result['info']['list']);

@@ -72,9 +72,8 @@ function check_dirfile(){
 		array('dir',  '可写', 'success', './Uploads/Picture/'),
 		array('dir',  '可写', 'success', './Uploads/ueditor/'),
 		array('dir',  '可写', 'success', './Uploads/WxshopPicture/'),
-		array('dir',  '可写', 'success', './Runtime/'),
+		array('dir',  '可写', 'success', RUNTIME_PATH),
 		array('dir', '可写', 'success', APP_PATH.'Common/Conf/'),
-		array('dir', '可写', 'success', './Html/'),
 	);
 
 	foreach ($items as &$val) {
@@ -141,12 +140,13 @@ function check_func(){
 /**
  * 写入配置文件
  * @param  array $config 配置信息
+ * @return string
  */
 function write_config($config, $auth_key){
 	if(is_array($config)){
 		//读取配置内容
 		$conf = file_get_contents(MODULE_PATH . 'Data/conf.tpl');
-		$auth = file_get_contents(MODULE_PATH . 'Data/auth.tpl');
+		$auth = file_get_contents(MODULE_PATH . 'Data/appmeta.tpl');
 		//替换配置项
 		foreach ($config as $name => $value) {
 			$conf = str_replace("[{$name}]", $value, $conf);
@@ -159,11 +159,12 @@ function write_config($config, $auth_key){
 		if(!IS_WRITE){
 			return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>'.realpath(APP_PATH).'/Common/Conf/config.php</p>
 			<textarea name="" style="width:650px;height:185px">'.$conf.'</textarea>
-			<p>'.realpath(APP_PATH).'/Common/Conf/auth.php</p>
+			<p>'.realpath(APP_PATH).'/Common/Conf/appmeta.php</p>
 			<textarea name="" style="width:650px;height:125px">'.$auth.'</textarea>';
 		}else{
+			
 			if(file_put_contents(APP_PATH . 'Common/Conf/config.php', $conf) &&
-			   file_put_contents(APP_PATH . 'Common/Conf/auth.php', $auth)){
+			   file_put_contents(APP_PATH . 'Common/Conf/appmeta.php', $auth)){
 				show_msg('配置文件写入成功');
 			} else {
 				show_msg('配置文件写入失败！', 'error');
@@ -181,6 +182,7 @@ function write_config($config, $auth_key){
  */
 function create_tables($db, $prefix = ''){
 	//读取SQL文件
+	//TODO: 支持多sql文件安装，或压缩包安装。针对2M以上的sql
 	$sql = file_get_contents(MODULE_PATH . 'Data/install.sql');
 	$sql = str_replace("\r", "\n", $sql);
 	$sql = explode(";\n", $sql);
@@ -212,8 +214,8 @@ function create_tables($db, $prefix = ''){
 
 function register_administrator($db, $prefix, $admin, $auth){
 	show_msg('开始注册创始人帐号...');
-	$sql = "INSERT INTO `[PREFIX]ucenter_member` VALUES " .
-		   "('1', '[NAME]', '[PASS]', '[EMAIL]', '', '[TIME]', '[IP]', 0, 0, '[TIME]', '1')";
+	$sql = "UPDATE `[PREFIX]ucenter_member` " .
+		   "set `username`='[NAME]', `password`='[PASS]', `email`='[EMAIL]', `last_login_time`= '[TIME]', `last_login_ip`='[IP]', `update_time`='[TIME]'";
 
 	$password = user_md5($admin['password'], $auth);
 	$sql = str_replace(
@@ -223,13 +225,13 @@ function register_administrator($db, $prefix, $admin, $auth){
 	//执行sql
 	$db->execute($sql);
 
-	$sql = "INSERT INTO `[PREFIX]member` VALUES ".
-		   "('1', '[NAME]','', '[NAME]', '0', '0', '', '0', '1', '0', '[TIME]', '0', '[TIME]','[TIME]', '1');";
-	$sql = str_replace(
-		array('[PREFIX]', '[NAME]', '[TIME]'),
-		array("common_", $admin['username'], NOW_TIME),
-		$sql);
-	$db->execute($sql);
+//	$sql = "INSERT INTO `[PREFIX]member` VALUES ".
+//		   "('1', '[NAME]','', '[NAME]', '0', '0', '', '0', '1', '0', '[TIME]', '0', '[TIME]','[TIME]', '1');";
+//	$sql = str_replace(
+//		array('[PREFIX]', '[NAME]', '[TIME]'),
+//		array("common_", $admin['username'], NOW_TIME),
+//		$sql);
+//	$db->execute($sql);
 	show_msg('创始人帐号注册完成！');
 }
 

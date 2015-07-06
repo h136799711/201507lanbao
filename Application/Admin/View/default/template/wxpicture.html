@@ -1,3 +1,4 @@
+
 <!-- Modal -->
 <div class="modal " id="wxuploadimg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog">
@@ -8,15 +9,17 @@
 				<h4 class="modal-title" id="myModalLabel">选择图片</h4>
 			</div>
 			<div class="modal-body clearfix">
-				<div class="col-lg-12 col-md-12 form-inline">
-						<input type="text" name="q"  class="form-control" placeholder="输入文件名查找" />
-						
-						<button class="btn btn-sm btn-primary js_search" type="button" ><i class="fa fa-search"></i>查找</button>	
-				</div>
+
+                <div class="col-lg-12 col-md-12 form-inline">
+                    <input type="date" name="time" class="time form-control" placeholder="默认全部">
+                    <input type="text" name="q"  class="form-control" placeholder="输入文件名查找" />
+                    <button class="btn btn-sm btn-primary js_search" type="button" ><i class="fa fa-search"></i>查找</button>
+                </div>
+				<!--<div class="col-lg-2 col-md-2">
+								
+							</div>-->
 				<div class="col-lg-12 col-md-12">
-					
-					<div class="btns pull-right">
-						<a href="javascript:void(0);" id="upload_picture"><i class="fa fa-upload"></i>本地上传</a>
+					<div class="btns pull-right"><a href="javascript:void(0);" id="upload_picture"><i class="fa fa-upload"></i>本地上传</a>
 					</div>
 					<div class="imgs-container pull-left">
 						<div class="loading">
@@ -61,7 +64,7 @@
 					
 				}
 			}else{
-				$("#wxuploadimg .imgs-list").html("没有相关图片信息!");
+				$("#wxuploadimg .imgs-list").html("");
 			}
 		}
 		
@@ -115,12 +118,15 @@
 		 * 向服务器请求数据
 		 */
 		function queryImgList() {
-			var q = $("#wxuploadimg input[name='q']").val();
+
+            var q = $("#wxuploadimg input[name='q']").val();
+            var time = $("#wxuploadimg input[name='time']").val();
 			$.ajax({
 				type: "post",
 				url: "{:U('Admin/File/picturelist')}?p="+wxuploadimg.pager.index,
 				data: {
-					q:q,
+                    time:time,
+                    q:q,
 					size: wxuploadimg.pager.size
 				},
 				dataType: "json",
@@ -143,6 +149,7 @@
 		function clearSelected(){			
 			$("#wxuploadimg .img-item.img-selected").removeClass("img-selected");			
 		}
+
 		/**
 		 * callback
 		 * @param {Object} cont 触发模态框的选择器
@@ -208,12 +215,13 @@
 					}
 					ev.preventDefault();
 					ev.stopPropagation();
-				})
-				
-				//查找
-				$(".js_search").click(function(){
-					queryImgList();
-				})
+				});
+
+                //查找
+                $(".js_search").click(function(){
+                    queryImgList();
+                });//END 查找
+
 			}
 			hadBind = true;
 		}
@@ -267,6 +275,7 @@
 	});
 
 	function uploadPicture(file, data) {
+		console.log(data);
 		var data = $.parseJSON(data);
 		var src = '';
 		if (data.status) {
@@ -284,7 +293,17 @@
 	$(function(){			
 		var init = '[autoinit]';
 		if(init == 'true'){
+
 			wxuploadimg.init({cont:".wxuploaderimg"});
 		}
+        if($.fn.datetimepicker){
+            $("#wxuploadimg input.time").datetimepicker({
+                lang: 'ch',
+                timepicker:false,
+                format:'Y-m-d',
+                formatDate:'Y-m-d'
+            });
+            console.log("日期初始化成功！");
+        }
 	})
 </script>

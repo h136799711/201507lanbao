@@ -9,11 +9,55 @@
 
 namespace Admin\Api;
 
+use Common\Api\Api;
 use Common\Model\WxuserGroupModel;
 use Common\Model\GroupAccessModel;
 
-class WxuserGroupApi extends \Common\Api\Api{
-		
+class WxuserGroupApi extends Api{
+
+
+    /**
+     * 查询，不分页
+     */
+    const QUERY_NO_PAGING = "Admin/WxuserGroup/queryNoPaging";
+    /**
+     * 添加
+     */
+    const ADD = "Admin/WxuserGroup/add";
+    /**
+     * 保存
+     */
+    const SAVE = "Admin/WxuserGroup/save";
+    /**
+     * 保存根据ID主键
+     */
+    const SAVE_BY_ID = "Admin/WxuserGroup/saveByID";
+
+    /**
+     * 删除
+     */
+    const DELETE = "Admin/WxuserGroup/delete";
+
+    /**
+     * 查询
+     */
+    const QUERY = "Admin/WxuserGroup/query";
+    /**
+     * 查询一条数据
+     */
+    const GET_INFO = "Admin/WxuserGroup/getInfo";
+
+    /**
+     *
+     * 添加实体并增加权限
+     */
+    const ADD_WITH_ACCESS = "Admin/WxuserGroup/addWithAccess";
+    /**
+     *
+     * 删除用户组，同时删除对应权限记录
+     */
+    const DEL_WITH_ACCESS = "Admin/WxuserGroup/delWithAccess";
+
 	protected function _init(){
 		$this->model = new WxuserGroupModel();
 	}

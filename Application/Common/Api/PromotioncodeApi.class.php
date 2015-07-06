@@ -6,8 +6,7 @@
 // | Copyright (c) 2013-2016, http://www.itboye.com. All Rights Reserved.
 // |-----------------------------------------------------------------------------------
 namespace Common\Api;
-
-
+use Admin\Api\GroupAccessApi;
 
 /**
  * 推广二维码插件
@@ -30,10 +29,14 @@ class PromotioncodeApi {
 			$this->config = $config;
 		}
 	}
-	/**
-	 * @param $data 通常包含是微信服务器返回来的信息
-	 * @return 返回 Wechat可处理的数组
-	 */
+
+    /**
+     * @param $appid
+     * @param $appsecret
+     * @param $fans
+     * @return 返回 Wechat可处理的数组
+     * @internal param 通常包含是微信服务器返回来的信息 $data
+     */
 	function process($appid,$appsecret,$fans){
 		
 		//检测是否有权限生成二维码
@@ -41,7 +44,7 @@ class PromotioncodeApi {
 			return array('status'=>false,'info'=>$this->config['noAuthorizedMsg']);
 		}
 		
-		$this -> wxapi = new \Common\Api\WeixinApi($appid, $appsecret);
+		$this -> wxapi = new WeixinApi($appid, $appsecret);
 		
 		
 		$relativefile = $this->getQrcode($fans['id']);
@@ -127,7 +130,7 @@ class PromotioncodeApi {
 		if($groupid == 0){
 			return false;
 		}
-		$result = apiCall("Admin/GroupAccess/getInfo", array('wxuser_group_id'=>$groupid));
+		$result = apiCall(GroupAccessApi::GET_INFO, array('wxuser_group_id'=>$groupid));
 		if($result['status'] && is_array($result['info'])){
 			if($result['info']['alloweddistribution'] == 1){
 				return true;

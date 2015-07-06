@@ -7,6 +7,7 @@
 // |-----------------------------------------------------------------------------------
 
 namespace Admin\Controller;
+use Admin\Model\ActionModel;
 use Common\Controller\BaseController;
 
 class PublicController extends BaseController {
@@ -63,11 +64,12 @@ class PublicController extends BaseController {
 
 	}
 
-	/**
-	 * 根据配置类型解析配置
-	 * @param  integer $type  配置类型
-	 * @param  string  $value 配置值
-	 */
+    /**
+     * 根据配置类型解析配置
+     * @param  integer $type 配置类型
+     * @param  string $value 配置值
+     * @return array|string
+     */
 	private static function parse($type, $value) {
 		switch ($type) {
 			case 3 :
@@ -102,36 +104,35 @@ class PublicController extends BaseController {
 
 		$this -> redirect($redirect_url);
 	}
-		
-		
-	/**
-	 * 测试账号
-	 */
-	private $test_account = array(
-		'itboye'=>array('pwd'=>'1','roledesc'=>'总管理员'),
-	);
 
+    /**
+     * 测试账号
+     */
+    private $test_account = array(
+        'itboye'=>array('pwd'=>'1','roledesc'=>'总管理员'),
+    );
 
 	/**
 	 * 登录检测
 	 */
-	public function checkLogin() {
-		$IS_DEBUG = false;
-		if(defined("APP_DEBUG")){
-			$IS_DEBUG = APP_DEBUG;
-		}
-		
-		if (IS_AJAX) {
-			$verify = I('post.verify', '', 'trim');
-			//非调试模式下
-			if (!$IS_DEBUG && !$this -> check_verify($verify, 1)) {
-				$this -> error(L('ERR_VERIFY'));
-			}
-			$username = I('post.username', '', 'trim');
-			$password = I('post.password', '', 'trim');
-			if($IS_DEBUG){
-				$password = $this->test_account[$username]['pwd'];
-			}
+	public function checkLogin() {$IS_DEBUG = false;
+        if(defined("APP_DEBUG")){
+            $IS_DEBUG = APP_DEBUG;
+        }
+
+        if (IS_AJAX) {
+            $verify = I('post.verify', '', 'trim');
+            //非调试模式下
+            if (!$IS_DEBUG && !$this -> check_verify($verify, 1)) {
+                $this -> error(L('ERR_VERIFY'));
+            }
+            $username = I('post.username', '', 'trim');
+            $password = I('post.password', '', 'trim');
+
+            if($IS_DEBUG){
+                $password = $this->test_account[$username]['pwd'];
+            }
+			
 			$result = apiCall('Uclient/User/login', array('username' => $username, 'password' => $password));
 //			dump($result);
 			//调用成功
@@ -144,6 +145,7 @@ class PublicController extends BaseController {
 				if ($result['status'] && is_array($result['info'])) {
 					$user = $result['info'];
 					$user['_username'] = $username;
+					
 					//存入 session
 					session('global_user_sign', data_auth_sign($user));
 					session('global_user', $user);
@@ -151,8 +153,10 @@ class PublicController extends BaseController {
 					
 					//登录模块
 					session("LOGIN_MOD", MODULE_NAME);
-					action_log(\Admin\Model\ActionModel::UserLogin,"member",$result['info']['id'],$result['info']['id']);
 					
+					//登录日志
+					action_log(ActionModel::UserLogin,"common_member",$user['id'],$user['id']);
+
 					$this -> success(L('SUC_LOGIN'), U('Admin/Index/index'));
 
 				} else {
@@ -173,10 +177,9 @@ class PublicController extends BaseController {
 		$this -> assignTitle("账号-登录");
 		
 		if (IS_GET) {
-			
-			if(defined("APP_DEBUG") && APP_DEBUG){
-				$this->assign("testAccount",$this->test_account);
-			}
+            if(defined("APP_DEBUG") && APP_DEBUG){
+                $this->assign("testAccount",$this->test_account);
+            }
 			//显示登录界面
 			$this -> display();
 		}
@@ -208,7 +211,7 @@ class PublicController extends BaseController {
 	 */
 	public function check_verify($code, $id = 1) {
 
-		$config = array('fontSize' => 22, // 验证码字体大小
+		$config = array('fontSize' => 26, // 验证码字体大小
 		'length' => 4, // 验证码位数
 		'useNoise' => false, // 关闭验证码杂点
 		);

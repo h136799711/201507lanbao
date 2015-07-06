@@ -11,7 +11,10 @@
 if(version_compare(PHP_VERSION,'5.3.0','<'))  die('require PHP > 5.3.0 !');
 
 define('BOYE_SYS_NAME',true);
-define("PROJECT_NAME","201506bbjie");
+define("PROJECT_NAME","201507lanbao");
+
+// 插件目录
+define('ADDON_PATH', './Addons/');
 
 // 是否调试模式
 define('APP_DEBUG',true);
@@ -19,10 +22,9 @@ define('APP_DEBUG',true);
 // 运行时文件
 define("APP_PATH","./Application/");
 
-require_once(APP_PATH.'/Common/Conf/auth.php');
+require_once(APP_PATH.'/Common/Conf/appmeta.php');
 
 define('HTML_PATH',      './Html/'); // 应用静态目录
-
 /**
  * 
  */

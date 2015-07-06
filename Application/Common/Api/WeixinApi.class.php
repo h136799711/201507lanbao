@@ -49,12 +49,12 @@ class WeixinApi {
 		return $access_token;
 	}
 
-	/**
-	 * 获取永久二维码
-	 * @param $accessToken token
-	 * @param $scene_str 编码到二维码的字符串 , 字符串类型，长度限制为1到64，仅永久二维码支持此字段
-	 * @return $obj
-	 */
+    /**
+     * 获取永久二维码
+     * @param $scene_str 编码到二维码的字符串 , 字符串类型，长度限制为1到64，仅永久二维码支持此字段
+     * @return array $obj
+     * @internal param token $accessToken
+     */
 	public function getQrcode($scene_str) {
 		$accessToken = $this -> getAccessToken();
 		$url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" . $accessToken;

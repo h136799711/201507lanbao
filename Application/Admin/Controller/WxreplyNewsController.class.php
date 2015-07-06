@@ -8,6 +8,8 @@
 
 namespace Admin\Controller;
 
+use Weixin\Api\WxreplyNewsApi;
+
 class WxreplyNewsController extends  AdminController{
 	
 	protected function _initialize(){
@@ -18,13 +20,13 @@ class WxreplyNewsController extends  AdminController{
 	 */
 	private function getAllKeywords(){
 		$keywords = array();
-		$textKeywords = apiCall("Admin/WxreplyText/getKeywords",array(getWxAccountID()));
-		$newsKeywords = apiCall("Admin/WxreplyNews/getKeywords",array(getWxAccountID()));
+		$textKeywords = apiCall(WxreplyTextApi::GET_KEYWORDS,array());
+		$newsKeywords = apiCall(WxreplyNewsApi::GET_KEYWORDS,array());
 		if($textKeywords['status']){
 			$keywords = $textKeywords['info'];
 		}
 		if($newsKeywords['status']){
-			$keywords = array_merge((array)$newsKeywords['info'],(array)$keywords);
+			$keywords = array_merge($keywords,$newsKeywords['info']);
 		}
 		return $keywords;
 	}
@@ -35,7 +37,7 @@ class WxreplyNewsController extends  AdminController{
 		$page = array('curpage' => I('get.p', 0), 'size' => C('LIST_ROWS'));
 		$order = " updatetime desc ";
 		//
-		$result = apiCall('Admin/WxreplyNews/query',array($map,$page,$order));
+		$result = apiCall(WxreplyNewsApi::QUERY,array($map,$page,$order));
 		if($result['status']){
 			$this->assign("keywords",$keywords);
 			$this->assign("show",$result['info']['show']);
@@ -61,7 +63,7 @@ class WxreplyNewsController extends  AdminController{
 						"picurl"=>I('post.picurl',''),
 						"wxaccount_id"=> getWxAccountID(),//TODO:暂支持单公众号所以此处公众号ID写死
 						);
-			$result = apiCall("Admin/WxreplyNews/add",array($entity));
+			$result = apiCall(WxreplyNewsApi::ADD,array($entity));
 			if($result['status']){
 				$this->success(L('RESULT_SUCCESS'),U('Admin/WxreplyNews/index'));
 			}else{
@@ -77,7 +79,7 @@ class WxreplyNewsController extends  AdminController{
 	public function edit(){
 		if(IS_GET){
 			$id = I('get.id',0);
-			$result = apiCall("Admin/WxreplyNews/getInfo",array(array('id'=>$id)));
+			$result = apiCall(WxreplyNewsApi::GET_INFO,array(array('id'=>$id)));
 			if($result['status']){
 				$this->assign("newsVO",$result['info']);
 				$this->display();
@@ -96,7 +98,7 @@ class WxreplyNewsController extends  AdminController{
 						'pictureid'=>I('post.pictureid',0),
 						"picurl"=>I('post.picurl',''),
 						);
-			$result = apiCall("Admin/WxreplyNews/saveByID",array($id,$entity));
+			$result = apiCall(WxreplyNewsApi::SAVE_BY_ID,array($id,$entity));
 			if($result['status']){
 				$this->success(L('RESULT_SUCCESS'),U('Admin/WxreplyNews/index'));
 			}else{

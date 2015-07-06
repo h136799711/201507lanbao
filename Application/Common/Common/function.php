@@ -6,7 +6,6 @@
 // | Copyright (c) 2013-2015, http://www.gooraye.net. All Rights Reserved.
 // |-----------------------------------------------------------------------------------
 
-
 /**
  * 检测用户是否登录
  * @return integer 0-未登录，大于0-当前登录用户ID
@@ -32,12 +31,15 @@ function is_administrator($uid = null) {
 
 /**
  * apiCall
+ * @param $url
+ * @param array $vars
+ * @param string $layer
+ * @return mixed
  */
-function apiCall($url, $vars, $layer = 'Api') {
+function apiCall($url, $vars=array(), $layer = 'Api') {
 	//TODO:考虑使用func_get_args 获取参数数组
 	return R($url, $vars, $layer);
 }
-
 
 /**
  * 记录日志，系统运行过程中可能产生的日志
@@ -171,61 +173,65 @@ function getStatus($status) {
  * 获得皮肤的字符串表示
  */
 function getSkin($skin) {
-	$desc = '';
 
-	switch($skin) {
-		case 0 :
-			$desc = "simplex";
-			break;
-		case 1 :
-			$desc = "flatly";
-			break;
-		case 2 :
-			$desc = "darkly";
-			break;
-		case 3 :
-			$desc = "cosmo";
-			break;
-		case 4 :
-			$desc = "paper";
-			break;
-		case 5 :
-			$desc = "slate";
-			break;
-		case 6 :
-			$desc = "superhero";
-			break;
-		case 7 :
-			$desc = "united";
-			break;
-		case 8 :
-			$desc = "yeti";
-			break;
-		case 9 :
-			$desc = "spruce";
-			break;
-		case 10 :
-			$desc = "readable";
-			break;
-		case 11 :
-			$desc = "cyborg";
-			break;
-		case 12 :
-			$desc = "cerulean";
-			break;
-		default :
-			$desc = "simplex";
-			break;
-	}
-	return $desc;
+    $desc = '';
+
+    switch($skin) {
+        case 0 :
+            $desc = "simplex";
+            break;
+        case 1 :
+            $desc = "flatly";
+            break;
+        case 2 :
+            $desc = "darkly";
+            break;
+        case 3 :
+            $desc = "cosmo";
+            break;
+        case 4 :
+            $desc = "paper";
+            break;
+        case 5 :
+            $desc = "slate";
+            break;
+        case 6 :
+            $desc = "superhero";
+            break;
+        case 7 :
+            $desc = "united";
+            break;
+        case 8 :
+            $desc = "yeti";
+            break;
+        case 9 :
+            $desc = "spruce";
+            break;
+        case 10 :
+            $desc = "readable";
+            break;
+        case 11 :
+            $desc = "cyborg";
+            break;
+        case 12 :
+            $desc = "cerulean";
+            break;
+        default :
+            $desc = "simplex";
+            break;
+    }
+    return $desc;
 }
 
 /**
  * 把返回的数据集转换成Tree
  * @param array $list 要转换的数据集
+ * @param string $pk
  * @param string $pid parent标记字段
- * @param string $level level标记字段
+ * @param string $child
+ * @param int $root
  * @return array
+ * @internal param string $level level标记字段
  */
 function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0) {
 	// 创建Tree
@@ -302,7 +308,51 @@ function addWeixinLog($data, $operator = '') {
 	$weixinlog -> add($log);
 }
 
+/**
+ * 获取订单状态的文字描述
+ */
+function getOrderStatus($status) {
 
+	switch($status) {
+		case \Common\Model\OrdersModel::ORDER_COMPLETED :
+			return "已完成";
+		case \Common\Model\OrdersModel::ORDER_RETURNED :
+			return "已退货";
+		case \Common\Model\OrdersModel::ORDER_SHIPPED :
+			return "已发货";
+		case \Common\Model\OrdersModel::ORDER_TOBE_CONFIRMED :
+			return "待确认";
+		case \Common\Model\OrdersModel::ORDER_TOBE_SHIPPED :
+			return "待发货";
+		case \Common\Model\OrdersModel::ORDER_CANCEL :
+			return "订单已关闭";
+		case \Common\Model\OrdersModel::ORDER_RECEIPT_OF_GOODS :
+			return "已收货";
+		case \Common\Model\OrdersModel::ORDER_BACK :
+			return "卖家退回";
+		default :
+			return "未知";
+	}
+}
+
+/**
+ * 获取支付状态的文字描述
+ */
+function getPayStatus($status) {
+	switch($status) {
+		case \Common\Model\OrdersModel::ORDER_PAID :
+			return "已支付";
+		case \Common\Model\OrdersModel::ORDER_TOBE_PAID :
+			return "待支付";
+		case \Common\Model\OrdersModel::ORDER_REFUND :
+			return "已退款";
+		case \Common\Model\OrdersModel::ORDER_CASH_ON_DELIVERY :
+			return "货到付款";
+			
+		default :
+			return "未知";
+	}
+}
 
 /**
  * 获取数据字典的ID
@@ -318,9 +368,14 @@ function getDatatree($code) {
  * @param $post_data 请求参数，数组形式
  * @param $cookie
  * @param $repeat TODO: 重复次数
+ * @return int
  */
-function fsockopenRequest($url, $post_data = array(), $cookie = array(), $repeat = 1) {
-	$method = "GET";
+function fsockopenRequest($url,$post_data = array(),$method="POST", $cookie = array(), $repeat = 1) {
+	if($method == "POST"){
+		
+	}else{
+		$method = "GET";
+	}
 	//通过POST或者GET传递一些参数给要触发的脚本
 	$url_array = parse_url($url);
 	//获取URL信息
@@ -329,14 +384,12 @@ function fsockopenRequest($url, $post_data = array(), $cookie = array(), $repeat
 	$fp = @fsockopen($url_array['host'], $port, $errno, $errstr, 5);
 	if (!$fp) {
 		//连接失败
-		return FALSE;
+		return 0;
 	}
 	//非阻塞设置
 	stream_set_blocking($fp, FALSE);
 	$getPath = $url_array['path'] . "?" . $url_array['query'];
-	if (!empty($post_data)) {
-		$method = "POST";
-	}
+	
 	$header = $method . " " . $getPath;
 	$header .= " HTTP/1.1\r\n";
 	$header .= "Host: " . $url_array['host'] . "\r\n";
@@ -344,14 +397,15 @@ function fsockopenRequest($url, $post_data = array(), $cookie = array(), $repeat
 	/*以下头信息域可以省略 */
 
 	$header .= "Referer:http://" . $url_array['host'] . " \r\n";
-	//		$header .= "User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53 \r\n";
-	//		$header .= "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 \r\n";
-	//		$header .= "Accept-Language:zh-CN,zh;q=0.8,en;q=0.6 \r\n";
-	//		$header .= "Accept-Encoding:gzip, deflate, sdch \r\n";
+//	$header .= "User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53 \r\n";
+//	$header .= "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 \r\n";
+//	$header .= "Accept-Language:zh-CN,zh;q=0.8,en;q=0.6 \r\n";
+//	$header .= "Accept-Encoding:gzip, deflate, sdch \r\n";
 
 	$header .= "Connection:Close\r\n";
-	//		$header .= "Keep-Alive: 3\r\n";
-	//		$header .= "Connection: keep-alive\r\n";
+//			$header .= "Keep-Alive: 3\r\n";
+//			$header .= "Connection: keep-alive\r\n";
+			
 	//需要重复2次
 	if (!empty($cookie)) {
 		$_cookie = strval(NULL);
@@ -383,8 +437,10 @@ function fsockopenRequest($url, $post_data = array(), $cookie = array(), $repeat
 		$post_str .= $_post;
 		//传递POST数据
 		$header .= $post_str;
+	}else{
+		$header .= "\r\n";
 	}
-
+	dump($header);
 	fwrite($fp, $header);
 	//TODO: 从返回结果来判断是否成功
 	//		$result = "";
@@ -398,7 +454,7 @@ function fsockopenRequest($url, $post_data = array(), $cookie = array(), $repeat
 	//		}
 
 	fclose($fp);
-	return true;
+	return 1;
 }
 /**
  * 获取当前完整url
@@ -428,6 +484,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         $user_id = is_login();
     }
 	
+	
     //查询行为,判断是否执行
     $action_info = apiCall("Admin/Action/getInfo", array(array("name"=>$action)));
 	
@@ -437,15 +494,15 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
     		
         return '该行为被禁用或删除';
     }
-	
+	$action_info = $action_info['info'];
     //插入行为日志
-    $data['action_id']      =   $action_info['info']['id'];
+    $data['action_id']      =   $action_info['id'];
     $data['user_id']        =   $user_id;
     $data['action_ip']      =   ip2long(get_client_ip());
     $data['model']          =   $model;
     $data['record_id']      =   $record_id;
     $data['create_time']    =   NOW_TIME;
-
+	
     //解析日志规则,生成日志备注
     if(!empty($action_info['log'])){
         if(preg_match_all('/\[(\S+?)\]/', $action_info['log'], $match)){//匹配[]，获取[]里的字符串
@@ -471,13 +528,14 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         //未定义日志规则，记录操作url
         $data['remark']     =   '操作url：'.$_SERVER['REQUEST_URI'];
     }
+	
 	$result = apiCall("Admin/ActionLog/add", array($data));
 	
 	if(!$result['status']){
 		LogRecord("记录操作日志失败!", $result['info']);
 	}
 //  M('ActionLog')->add($data);
-
+		
     if(!empty($action_info['rule'])){
         //解析行为
         $rules = parse_action($action, $user_id);
@@ -549,13 +607,14 @@ function parse_action($action = null, $self){
 
 /**
  * 执行行为
- * @param array $rules 解析后的规则数组
+ * @param array|bool $rules 解析后的规则数组
  * @param int $action_id 行为id
  * @param array $user_id 执行的用户id
- * @return boolean false 失败 ， true 成功
- * 
+ * @return bool false 失败 ， true 成功
+ *
  */
 function execute_action($rules = false, $action_id = null, $user_id = null){
+	
     if(!$rules || empty($action_id) || empty($user_id)){
         return false;
     }
@@ -568,16 +627,17 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
         $map['create_time'] = array('gt', NOW_TIME - intval($rule['cycle']) * 3600);
 		
 		//统计执行次数
-        $exec_count = M('ActionLog')->where($map)->count();
+        $exec_count = D('ActionLog')->where($map)->count();
         if($exec_count > $rule['max']){
             continue;
         }
 		
-        //执行数据库操作        
-        $Model = M(ucfirst($rule['table']));
+        //执行数据库操作
+        $Model = D(ucfirst($rule['table']));
         $field = $rule['field'];
         $res = $Model->where($rule['condition'])->setField($field, array('exp', $rule['rule']));
 		
+//		dump($Model);
         if(!$res){
             $return = false;
         }
@@ -644,7 +704,7 @@ function get_nickname($uid = 0){
  * 获取行为数据
  * @param string $id 行为id
  * @param string $field 需要获取的字段
- * @author huajie <banhuajie@163.com>
+ * @return bool
  */
 function get_action($id = null, $field = null){
 	
@@ -665,4 +725,78 @@ function get_action($id = null, $field = null){
     $ret = empty($field) ? $list[$id] : $list[$id][$field];
 	
     return $ret;
+}
+
+/**
+ * 获取插件类的类名
+ * @var string $name 插件名
+ * @return string
+ */
+function get_addon_class($name){
+    $class = "Addons\\{$name}\\{$name}Addon";
+    return $class;
+}
+/**
+ * 获取插件类的配置文件数组
+ * @param string $name 插件名
+ * @return array
+ */
+function get_addon_config($name){
+    $class = get_addon_class($name);
+    if(class_exists($class)) {
+        $addon = new $class();
+        return $addon->getConfig();
+    }else {
+        return array();
+    }
+}
+
+/**
+ * 插件显示内容里生成访问插件的url
+ * @param string $url url
+ * @param array $param 参数
+ * @return string
+ */
+function addons_url($url, $param = array()){
+    $url        = parse_url($url);
+    $case       = C('URL_CASE_INSENSITIVE');
+    $addons     = $case ? parse_name($url['scheme']) : $url['scheme'];
+    $controller = $case ? parse_name($url['host']) : $url['host'];
+    $action     = trim($case ? strtolower($url['path']) : $url['path'], '/');
+    /* 解析URL带的参数 */
+    if(isset($url['query'])){
+        parse_str($url['query'], $query);
+        $param = array_merge($query, $param);
+    }
+    /* 基础参数 */
+    $params = array(
+        '_addons'     => $addons,
+        '_controller' => $controller,
+        '_action'     => $action,
+    );
+    $params = array_merge($params, $param); //添加额外参数
+    return U('Addons/execute', $params);
+}
+/**
+ * 基于数组创建目录和文件
+ *
+ */
+function create_dir_or_files($files){
+    foreach ($files as $key => $value) {
+        if(substr($value, -1) == '/'){
+            mkdir($value);
+        }else{
+            @file_put_contents($value, '');
+        }
+    }
+}
+
+/**
+ * 从session中取WxAccountID
+ */
+function getWxAccountID(){
+    if(session("?wxaccountid")){
+        return session("wxaccountid");
+    }
+    return -1;
 }

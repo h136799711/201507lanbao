@@ -24,8 +24,8 @@ class SuggestModel extends Model{
 	
 	
 	protected $_auto = array(
-		array('createtime',NOW_TIME,self::MODEL_INSERT),
-		array('updatetime',"time",self::MODEL_BOTH,"function"),
+		array('create_time',NOW_TIME,self::MODEL_INSERT),
+		array('update_time',"time",self::MODEL_BOTH,"function"),
 		array('status',"1",self::MODEL_INSERT),
 	);
 	

@@ -8,11 +8,14 @@
 
 namespace Tool\Controller;
 use Think\Controller;
+use Tool\Api\AreaApi;
+use Tool\Api\CityApi;
+use Tool\Api\ProvinceApi;
 
 class CityController extends Controller{
 	
 	public function index(){
-		$result = apiCall("Tool/Province/queryNoPaging",array());
+		$result = apiCall(ProvinceApi::QUERY_NO_PAGING,array());
 		if($result['status']){
 			$this->assign("provinces",$result['info']);		
 			$this->display();
@@ -24,36 +27,24 @@ class CityController extends Controller{
 		
 		$provinceID = I('post.provinceid','');
 		
-		$result = apiCall("Tool/City/getListByProvinceID",array($provinceID));
+		$result = apiCall(CityApi::GET_LIST_BY_PROVINCE_ID,array($provinceID));
 		if($result['status']){
 			$this->success($result['info']);
 		}else{
 			$this->error($result['info']);
 		}
-//		if($result['status']){
-//			$this->assign("citys",$result['info']);		
-//			$this->display();
-//		}else{
-//			
-//		}
 	}
 	
 	public function getArea(){
 		
 		$cityid = I('post.cityid','');
 		
-		$result = apiCall("Tool/Area/getListByCityID",array($cityid));
+		$result = apiCall(AreaApi::GET_LIST_BY_CITY_ID,array($cityid));
 		if($result['status']){
 			$this->success($result['info']);
 		}else{
 			$this->error($result['info']);
 		}
-//		if($result['status']){
-//			$this->assign("citys",$result['info']);		
-//			$this->display();
-//		}else{
-//			
-//		}
 	}
 	
 }
