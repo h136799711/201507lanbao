@@ -5,9 +5,10 @@
  * Date: 15/7/6
  * Time: 17:21
  */
-namespace OAuth2Manage\Model;
+namespace OAuth2Manage\Api;
 
 use Common\Api\Api;
+use OAuth2Manage\Model\AuthorizationCodesModel;
 use Think\Model;
 
 class AuthorizationCodesApi extends Api{

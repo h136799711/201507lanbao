@@ -15,7 +15,7 @@ use Weixin\Api\WxuserApi;
 interface IAccount
 {
 
-    function login($username, $password, $email, $phone, $from);
+    function login($username, $password,$type='1',$from='');
 
     function register($entity);
     //根据用户ID获取信息
@@ -29,6 +29,7 @@ interface IAccount
  */
 class AccountApi implements IAccount
 {
+
     /**
      * 登录
      */
@@ -45,7 +46,7 @@ class AccountApi implements IAccount
     public function getInfo($id){
 
         $result = apiCall(UserApi::GET_INFO, array($id));
-//        id,username,email,mobile,status
+
         if(!$result['status']){
             return array('status' => false, 'info' => $result['info']);
         }
@@ -60,23 +61,34 @@ class AccountApi implements IAccount
 
         $member_info = $result['info'];
 
-        $result = apiCall(WxuserApi::GET_INFO, array(array('id'=>$id)));
+//        $result = apiCall(WxuserApi::GET_INFO, array(array('id'=>$id)));
+//
+//        if(!$result['status']){
+//            return array('status' => false, 'info' => $result['info']);
+//        }
+//
+//        $wxuser_info = $result['info'];
 
-        if(!$result['status']){
-            return array('status' => false, 'info' => $result['info']);
-        }
-
-        $wxuser_info = $result['info'];
-
-        $info = array_merge($user_info,$member_info,$wxuser_info);
+        $info = array_merge($user_info,$member_info);
 
         return array('status'=>true,'info'=>$info);
     }
 
-    public function login($username, $password, $email, $phone, $from)
+    /**
+     * 登录接口
+     * @param  string $username 用户名
+     * @param  string $password 用户密码
+     * @param int|string $type 用户名类型 （1-用户名，2-邮箱，3-手机，4-UID）
+     * @param string $from
+     * @return int 登录成功-用户ID，登录失败-错误编号
+     */
+    public function login($username, $password,$type='1',$from='')
     {
-        // TODO: Implement login() method.
-        return true;
+
+        $result = apiCall(UserApi::LOGIN,array($username,$password,$type));
+        $notes = "[用户".$username.",类型：".$type."],调用登录接口";
+        addLog("/Account/login","","",$notes);
+        return $result;
     }
 
     /**
@@ -86,8 +98,16 @@ class AccountApi implements IAccount
      */
     public function register($entity)
     {
+
         if (!isset($entity['username']) || !isset($entity['password']) || !isset($entity['from'])) {
             return array('status' => false, 'info' => "账户信息缺失!");
+        }
+
+        $empty_check = array('nickname','avatar','province','country','city');
+        foreach($empty_check as $vo){
+            if(!isset($wxuser[$vo])){
+                $wxuser[$vo] = '';
+            }
         }
 
         $username = $entity['username'];
@@ -95,10 +115,13 @@ class AccountApi implements IAccount
         $email = $entity['email'];
         $mobile = $entity['mobile'];
         $from = $entity['from'];
-        M()->startTrans();
+
+        $trans = M();
+        $trans->startTrans();
         $error = "";
         $flag = false;
         $result = apiCall(UserApi::REGISTER, array($username, $password, $email, $mobile, $from));
+        $uid = 0;
         if ($result['status']) {
             $uid = $result['info'];
 
@@ -107,20 +130,18 @@ class AccountApi implements IAccount
                 'realname' => '',
                 'nickname' => '',
                 'idnumber' => '',
-                'sex' => 0,
+                'sex' =>  $wxuser['sex'],
                 'birthday' => time(),
                 'qq' => '',
                 'score' => 0,
                 'login' => 0,
             );
+
             $result = apiCall(MemberApi::ADD, array($member));
             if (!$result['status']) {
                 $flag = true;
                 $error = $result['info'];
             }
-            //继续注册wxuser表
-
-            $wxuser = array();
 
 
         } else {
@@ -129,14 +150,15 @@ class AccountApi implements IAccount
         }
 
 
-
         if ($flag) {
-            M()->rollback();
+            apiCall(UserApi::DELETE_BY_ID, array($uid));
+            $trans->rollback();
             return array('status' => false, 'info' => $error);
         } else {
-            M()->commit();
+            $trans->commit();
             return array('status' => true, 'info' => $uid);
         }
+
 
     }
 

@@ -5,15 +5,20 @@
  * Date: 15/7/6
  * Time: 17:21
  */
-namespace OAuth2Manage\Model;
+namespace OAuth2Manage\Api;
 
 use Common\Api\Api;
+use OAuth2Manage\Model\ClientsModel;
 use Think\Model;
 
 class ClientsApi extends Api{
 
 
 
+    /**
+     * 获取一条信息
+     */
+    const GET_INFO = "OAuth2Manage/Clients/getInfo";
     /**
      * 查询，不分页
      */

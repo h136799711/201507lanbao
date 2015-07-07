@@ -15,17 +15,16 @@ class UserController extends ApiController{
 
     function getSupportMethod()
     {
-        // TODO: Implement getSupportMethod() method.
         return array(
-            'login_post'=>array(
-                'param'=>'',
+            'item'=>array(
+                'param'=>'access_token|username|password',
                 'return'=>'array(\"status\"=>返回状态,\"info\"=>\"信息\")',
                 'author'=>'hebidu [hebiduhebi@163.com]',
                 'version'=>'1.0.0',
                 'description'=>'用户登录验证',
                 'demo_url'=>'http://manual.itboye.com#',
             ),
-            );
+        );
 
     }
 
@@ -34,13 +33,22 @@ class UserController extends ApiController{
      * @internal param post.username
      * @internal param post.password
      */
-    public  function post_login_json(){
+    public  function login_post(){
+
         $username = I("post.username",'');
         $password = I('post.password','');
 
         $result = apiCall(AccountApi::LOGIN,array($username,$password));
 
-        $this->ajaxReturn($result,"json");
+        if($result['status']){
+            $uid = $result['info'];
+            $result = apiCall(AccountApi::GET_INFO,array($uid));
+
+            $this->apiReturnSuc($result['info'],"json");
+        }else{
+            $this->apiReturnErr($result['info'],"json");
+        }
+
     }
 
 }

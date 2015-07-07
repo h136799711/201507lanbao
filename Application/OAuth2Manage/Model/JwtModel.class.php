@@ -10,5 +10,5 @@ namespace OAuth2Manage\Model;
 use Think\Model;
 
 class JwtModel extends Model{
-
+    protected $tablePrefix = "oauth_";
 }

@@ -6,77 +6,17 @@
 <block name="area_body">
     <div class="col-lg-10 col-md-10 col-lg-offset-1 col-md-offset-1 clearfix">
         <h2>Token获取测试</h2>
-        <form class="form-horizontal authForm" action="{:U('Test/OAuth2/token')}" method="post">
-            <div class="form-group">
-                <label class="control-label col-lg-2 col-md-2">授权类型</label>
+        <a href="{:U('Test/OAuth2/auth_code')}" class="btn btn-primary">验证码模式</a>
+        <a href="{:U('Test/OAuth2/implicit')}" class="btn btn-primary">隐式模式</a>
+        <a href="{:U('Test/OAuth2/client_credentials')}" class="btn btn-primary">Client_Credentials模式</a>
+        <a href="{:U('Test/OAuth2/user_credentials')}" class="btn btn-primary">User_Credentials</a>
 
-                <div class="col-lg-10 col-md-10">
-                    <select name="grant_type" class="form-control">
-                        <option value="client_credentials">client_credentials</option>
-                        <option value="password">password</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-lg-2 col-md-2">ClientID(2种模式下有效)</label>
-                <div class="col-lg-10 col-md-10">
-                    <input type="text" name="client_id" class="form-control" value="testclient"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-lg-2 col-md-2">appsecret(client_credentials 模式下有效)</label>
-                <div class="col-lg-10 col-md-10">
-                    <input type="text" name="client_secret" class="form-control"  value="testpass"/>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-lg-2 col-md-2">账号(PASSWORD 模式下有效)</label>
-                <div class="col-lg-10 col-md-10">
-                    <input type="text" name="username" class="form-control"  value="itboye"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-lg-2 col-md-2">密码(PASSWORD 模式下有效)</label>
-                <div class="col-lg-10 col-md-10">
-                    <input type="text" name="password" class="form-control"  value="1"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-lg-2 col-md-2">&nbsp;</label>
-
-                <div class="col-lg-10 col-md-10">
-                    <button type="button" class="btn btn-sm btn-primary js_submit"  >提交</button>
-                </div>
-            </div>
-        </form>
-        <div class="well js_panel">
-
-        </div>
+    </div>
+    <div class="col-lg-10 col-md-10 col-lg-offset-1 col-md-offset-1 clearfix">
+        <h2>Api权限测试测试</h2>
+        <a href="{:U('Test/OAuth2/authorize')}" class="btn btn-primary">验证码模式</a>
     </div>
 </block>
 
 <block name="area_footer">
-    <script type="text/javascript">
-        $(function(){
-            $(".js_submit").click(function(ev){
-                var that = ev.target;
-                $(that).button("loading");
-                var form = $(".authForm");
-                var query = form.serialize();
-                var target = "{:U('Test/OAuth2/token')}";
-                $.post(target, query).always(function() {
-                    setTimeout(function(){
-                        $(that).button("reset");
-                    },1400);
-                }).done(function(data) {
-                    console.log(data);
-                }).fail(function(data){
-                    var json = JSON.parseJSON(data.responseText);
-                    console.log(json);
-                });//end post
-
-            })
-        });
-    </script>
 </block>

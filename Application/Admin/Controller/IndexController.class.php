@@ -26,4 +26,11 @@ class IndexController extends AdminController {
     public function distribution(){
        $this->display();
     }
+
+    /**
+     * 分销首页
+     */
+    public function oauth2(){
+        $this->display();
+    }
 }

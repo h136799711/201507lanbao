@@ -5,14 +5,13 @@
  * Date: 15/7/6
  * Time: 17:21
  */
-namespace OAuth2Manage\Model;
+namespace OAuth2Manage\Api;
 
 use Common\Api\Api;
+use OAuth2Manage\Model\RefreshTokensModel;
 use Think\Model;
 
 class RefreshTokensApi extends Api{
-
-
 
     /**
      * 查询，不分页

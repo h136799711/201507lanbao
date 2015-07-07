@@ -5,26 +5,52 @@
  * Date: 15/7/6
  * Time: 15:10
  */
-namespace Test\Api;
+namespace Api\Service;
 
-//use OAuth2\Autoloader;
-//use OAuth2\Server;
-//use OAuth2\Storage\Pdo;
 
 use OAuth2\Autoloader;
 use OAuth2\GrantType\ClientCredentials;
 use OAuth2\GrantType\UserCredentials;
 use OAuth2\OpenID\GrantType\AuthorizationCode;
 use OAuth2\Server;
+use OAuth2\Storage\MyPdo;
 use OAuth2\Storage\Pdo;
 
-class ServerApi {
+class OAuth2Service {
 
     private $dsn;
     private $uname;
     private $pwd ;
 
     private $server;
+
+    const ALL = "ALL";
+    /**
+     * 隐式模式
+     * http://www.dannysite.com/blog/178/
+     * http://bshaffer.github.io/oauth2-server-php-docs/grant-types/implicit/
+     */
+    const IMPLICIT = "implicit";
+
+    /**
+     * 客服端授权模式
+     * http://www.dannysite.com/blog/181/
+     * http://bshaffer.github.io/oauth2-server-php-docs/grant-types/client-credentials/
+     */
+    const CLIENT_CREDENTIALS = "client_credentials";
+
+    /**
+     * http://www.dannysite.com/blog/177/
+     * 授权码（Authorization Code）模式
+     * http://bshaffer.github.io/oauth2-server-php-docs/grant-types/authorization-code/
+     */
+    const AUTHORIZATION_CODE = "authorization_code";
+
+    /**
+     *
+     * password模式
+     */
+    const PASSWORD = "password";
 
     public function __construct(){
         $dbname = C('DB_NAME');
@@ -34,55 +60,53 @@ class ServerApi {
         $this->pwd = C('DB_PWD');//"1";
     }
 
-    public function init(){
+    public function getMysqlStorage(){
+        $storage = new MyPdo(array('dsn' => $this->dsn, 'username' => $this->uname, 'password' => $this->pwd),array('user_table'=>C('DB_PREFIX').'ucenter_member'));
+        return $storage;
+    }
 
+    public function init($type){
 
         ini_set('display_errors',1);
         error_reporting(E_ALL);
 
         vendor("OAuth2.Autoloader");
-        $autoloader = new Autoloader();
-        $autoloader::register();
+        $loader = new Autoloader();
+        $loader::register();
 
-        //array(
-//        'client_table' => 'oauth_clients',
-//            'access_token_table' => 'oauth_access_tokens',
-//            'refresh_token_table' => 'oauth_refresh_tokens',
-//            'code_table' => 'oauth_authorization_codes',
-//            'user_table' => 'oauth_users', //用户表
-//            'jwt_table'  => 'oauth_jwt',
-//            'jti_table'  => 'oauth_jti',
-//            'scope_table'  => 'oauth_scopes',
-//            'public_key_table'  => 'oauth_public_keys',
-//        )
         //数据库存储
-        $storage = new Pdo(array('dsn' => $this->dsn, 'username' => $this->uname, 'password' => $this->pwd),array(C('DB_PREFIX').'ucenter_member'));
+        $storage = $this->getMysqlStorage();
 
         // Pass a storage object or array of storage objects to the OAuth2 server class
-        $server = new Server($storage,array('allow_implicit' => true));
+        if($type == self::IMPLICIT){
+            $server = new Server($storage,array('allow_implicit' => true));
+        }else{
+            $server = new Server($storage,array('allow_implicit' => false));
+        }
 
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new ClientCredentials($storage,array(
-            // this request will only allow authorization via the Authorize HTTP Header (Http Basic)
-            //
-            'allow_credentials_in_request_body => false'
-        )));
-
-        // Add the "Authorization Code" grant type (this is where the oauth magic happens)
-        $server->addGrantType(new AuthorizationCode($storage));
-
-        // add the grant type to your OAuth server
-        $server->addGrantType(new UserCredentials($storage));
-
-
+        if($type == self::CLIENT_CREDENTIALS){
+            // 客户端授权类型
+            $server->addGrantType(new ClientCredentials($storage,array(
+                // this request will only allow authorization via the Authorize HTTP Header (Http Basic)
+                'allow_credentials_in_request_body => true'
+            )));
+        }elseif($type == self::AUTHORIZATION_CODE){
+            // 增加授权码模式授权类型
+            $server->addGrantType(new AuthorizationCode($storage));
+        }elseif($type == self::PASSWORD){
+            // 增加password模式授权类型
+            $server->addGrantType(new UserCredentials($storage));
+        }else{
+            // 增加password模式授权类型
+            $server->addGrantType(new UserCredentials($storage));
+            // 增加授权码模式授权类型
+            $server->addGrantType(new AuthorizationCode($storage));
+            // 客户端授权类型
+            $server->addGrantType(new ClientCredentials($storage));
+        }
 
         return $server;
     }
-
-//    public function addGrantTypeUserCredentials(){
-//
-//        $this->server->addGrantType(new UserCredentials($this->storage));
-//    }
 
 
 }

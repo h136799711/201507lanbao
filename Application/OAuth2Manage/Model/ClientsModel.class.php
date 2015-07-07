@@ -16,14 +16,7 @@ class ClientsModel extends Model{
 
     protected $tablePrefix = "oauth_";
 
-    /**
-     * 自动完成
-     * @var array
-     */
-    protected $_auto = array(
-        array('create_time','time',self::MODEL_INSERT,'function'),
-        array('update_time','time',self::MODEL_BOTH,'function'),
-    );
+
 
 
 }

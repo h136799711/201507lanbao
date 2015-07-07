@@ -16,7 +16,6 @@ class TestRestController extends ApiController{
     public function index_get_json($id){
         $id = $this->param_get("id");
         dump($id);
-
         $data = array("status"=>false,'info'=>$id);
         $this->response($data,'json');
     }

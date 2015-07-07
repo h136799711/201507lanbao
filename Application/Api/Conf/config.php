@@ -8,9 +8,10 @@
 
 return array(
     'SESSION_AUTO_START'=>false,
+    'DEFAULT_THEME'=>'default',
 
     'DB_TYPE'                   =>  'mysql',
-    'DB_HOST'                   =>  '127.0.0.1',//rdsrrbifmrrbifm.mysql.rds.aliyuncs.com
+    'DB_HOST'                   =>  '192.168.0.100',//rdsrrbifmrrbifm.mysql.rds.aliyuncs.com
     'DB_NAME'                   =>  'itboye_lanbao', //boye_ceping
     'DB_USER'                   =>  'root',//boye
     'DB_PWD'                    =>  '1',//bo-ye2015BO-YE

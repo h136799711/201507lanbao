@@ -11,4 +11,5 @@ use Think\Model;
 
 class AuthorizationCodesModel extends Model{
 
+    protected $tablePrefix = "oauth_";
 }

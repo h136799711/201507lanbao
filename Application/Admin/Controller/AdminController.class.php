@@ -53,20 +53,20 @@ class AdminController extends CheckLoginController {
 			$this -> error(L('ERR_NO_PERMISSION'));
 		}
 		$this->get_current_usermenu();
-		$this->getWxaccount();
+//		$this->getWxaccount();
 		$this -> assign("user", session("global_user"));
-		$this -> assign("wxaccount", session("wxaccount"));
+//		$this -> assign("wxaccount", session("wxaccount"));
 		
 	}
 
 	//===================权限相关START=======================
-	
+
 	protected function exitIfError($result){
 		if(!$result['status']){
 			$this->error($result['info']);
 		}
 	}
-	
+
 	/**
 	 * 获取当前用户的菜单列表ID
 	 */

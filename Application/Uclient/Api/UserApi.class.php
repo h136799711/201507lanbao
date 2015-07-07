@@ -18,6 +18,10 @@ class UserApi extends Api
     /**
      * 检测邮箱是否存在
      */
+    const DELETE_BY_ID = "Uclient/User/deleteByID";
+    /**
+     * 检测邮箱是否存在
+     */
     const CHECK_EMAIL = "Uclient/User/checkEmail";
     /**
      * 检测用户名是否存在
@@ -84,6 +88,15 @@ class UserApi extends Api
 
     }
 
+    public function deleteByID($uid){
+
+        $result = $this->model->where(array('id'=>$uid))->delete();
+        if($result === false){
+            return array('status' => false, 'info' => $this->model->getDbError());
+        }else{
+            return array('status' => true, 'info' => $result);
+        }
+    }
 
     /**
      * 注册一个新用户

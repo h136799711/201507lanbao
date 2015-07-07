@@ -6,10 +6,15 @@
  * Time: 17:26
  */
 
-namespace OAuth2Manage\Model;
+namespace OAuth2Manage\Api;
 
+use Common\Api\Api;
+use OAuth2Manage\Model\ScopesModel;
 use Think\Model;
 
+/**
+ * ScopesModel model
+ */
 class ScopesApi extends Api{
 
     /**

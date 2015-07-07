@@ -486,10 +486,8 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
 	
 	
     //查询行为,判断是否执行
-    $action_info = apiCall("Admin/Action/getInfo", array(array("name"=>$action)));
-	
-	
-//	dump($action_info);
+    $action_info = apiCall(\Admin\Api\ActionApi::GET_INFO, array(array("name"=>$action)));
+
     if($action_info['status'] && is_array($action_info['info'])  && $action_info['info']['status'] != 1){
     		
         return '该行为被禁用或删除';
@@ -529,7 +527,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         $data['remark']     =   '操作url：'.$_SERVER['REQUEST_URI'];
     }
 	
-	$result = apiCall("Admin/ActionLog/add", array($data));
+	$result = apiCall(\Admin\Api\ActionLogApi::ADD, array($data));
 	
 	if(!$result['status']){
 		LogRecord("记录操作日志失败!", $result['info']);
@@ -573,7 +571,7 @@ function parse_action($action = null, $self){
     }
 
     //查询行为信息
-  	$result = apiCall("Admin/Action/getInfo", array($map));
+  	$result = apiCall(\Admin\Api\ActionApi::GET_INFO, array($map));
 	if(!$result['status']){
 		return false;
 	}
@@ -627,7 +625,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
         $map['create_time'] = array('gt', NOW_TIME - intval($rule['cycle']) * 3600);
 		
 		//统计执行次数
-        $exec_count = D('ActionLog')->where($map)->count();
+        $exec_count = M('ActionLog','common_')->where($map)->count();
         if($exec_count > $rule['max']){
             continue;
         }
@@ -648,8 +646,8 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
 /**
  * 时间戳格式化
  * @param int $time
+ * @param string $format
  * @return string 完整的时间显示
- * @author huajie <banhuajie@163.com>
  */
 function time_format($time = NULL,$format='Y-m-d H:i'){
     $time = $time === NULL ? NOW_TIME : intval($time);

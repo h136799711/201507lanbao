@@ -15,6 +15,37 @@ use \Admin\Model\ActionModel;
 class ActionApi extends Api{
 
 
+    /**
+     * 查询，不分页
+     */
+    const QUERY_NO_PAGING = "Admin/Action/queryNoPaging";
+    /**
+     * 添加
+     */
+    const ADD = "Admin/Action/add";
+    /**
+     * 保存
+     */
+    const SAVE = "Admin/Action/save";
+    /**
+     * 保存根据ID主键
+     */
+    const SAVE_BY_ID = "Admin/Action/saveByID";
+
+    /**
+     * 删除
+     */
+    const DELETE = "Admin/Action/delete";
+
+    /**
+     * 查询
+     */
+    const QUERY = "Admin/Action/query";
+    /**
+     * 查询一条数据
+     */
+    const GET_INFO = "Admin/Action/getInfo";
+
 	protected function _init(){
 		$this->model = new ActionModel();
 	}

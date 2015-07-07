@@ -11,5 +11,5 @@ namespace OAuth2Manage\Model;
 use Think\Model;
 
 class ScopesModel extends Model{
-
+    protected $tablePrefix = "oauth_";
 }

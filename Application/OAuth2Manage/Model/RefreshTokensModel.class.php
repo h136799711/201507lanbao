@@ -11,5 +11,5 @@ namespace OAuth2Manage\Model;
 use Think\Model;
 
 class RefreshTokensModel extends Model{
-
+    protected $tablePrefix = "oauth_";
 }
