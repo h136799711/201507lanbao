@@ -26,3 +26,18 @@ function addLog($api_uri,$get,$post,$notes){
         $model->add();
     }
 }
+
+/**
+ * 加密
+ */
+function encrypt($data,$key){
+
+}
+
+
+/**
+ * 解密
+ */
+function decrypt($data,$key){
+
+}

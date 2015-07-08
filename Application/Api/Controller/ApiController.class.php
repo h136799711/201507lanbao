@@ -10,6 +10,7 @@ namespace Api\Controller;
 
 
 use Admin\Model\LogModel;
+use Api\Service\EncryptService;
 use Common\Model\WeixinLogModel;
 use Think\Controller\RestController;
 
@@ -22,6 +23,7 @@ use Think\Controller\RestController;
  */
 abstract class ApiController extends RestController{
 
+    private $encrypt_key = "";
     /**
      * 构造函数
      */
@@ -35,15 +37,19 @@ abstract class ApiController extends RestController{
     }
 
     protected function _init(){
-        $access_token = $this->param_get("access_token");
+        $access_token = I("get.access_token");
         if(empty($access_token)){
-            $access_token = $this->param_post("access_token");
+            $access_token = I("post.access_token");
         }
         if(empty($access_token)){
             $this->apiReturnErr("缺失access_token!");
         }
 
         $_GET['access_token'] = $access_token;
+        //TODO: 对传输数据进行解密
+//        $data = $_POST['data'];
+//        $_POST = array_merge($_POST,$data);
+
         $resCtrl = new ResourceController();
 
         $result = $resCtrl->authorize();
@@ -53,24 +59,11 @@ abstract class ApiController extends RestController{
         }
     }
 
-    protected  function param_get($name){
-        return $this->param_filter($name,"get");
-    }
-
-    protected  function param_post($name){
-        return $this->param_filter($name,"post");
-    }
-
-    protected function param_filter($name,$type){
-        $name = I($type.'.'.$name,'');
-        $name = str_replace(".".$this->_type,"",$name);
-        return $name;
-    }
 
     public function _empty(){
-        $supportMethod = $this->getSupportMethod();
-        $data = array("status"=>404,'supportMethod'=>$supportMethod);
-        $this->response($data,"xml","404");
+//        $supportMethod = $this->getSupportMethod();
+        $data = array("status"=>404,'info'=>'访问地址错误!');
+        $this->response($data,"json","404");
     }
 
     /**

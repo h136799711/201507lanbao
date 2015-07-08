@@ -52,6 +52,9 @@ class AccountApi implements IAccount
         }
 
         $user_info = $result['info'];
+        if($user_info['status'] != 1){
+            return array('status'=>true,'info'=>"用户不存在或被禁用!");
+        }
 
         $result = apiCall(MemberApi::GET_INFO, array(array('id'=>$id)));
 
@@ -70,6 +73,15 @@ class AccountApi implements IAccount
 //        $wxuser_info = $result['info'];
 
         $info = array_merge($user_info,$member_info);
+        unset($info['status']);
+        unset($info['id']);
+        unset($info['login']);
+        unset($info['reg_ip']);
+        unset($info['reg_time']);
+        unset($info['qq']);
+        unset($info['score']);
+        unset($info['last_login_ip']);
+
 
         return array('status'=>true,'info'=>$info);
     }

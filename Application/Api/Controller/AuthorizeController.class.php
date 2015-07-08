@@ -45,11 +45,11 @@ class AuthorizeController extends RestController{
         //TODO: 加入调用次数限制
 
         if($response_type == "code"){
-            action_log("oauth2_authorization_code",null,null,$client_id);
+//            action_log("oauth2_authorization_code",null,null,$client_id);
             $this->authorization_code($client_id,$state,$redirect_uri);
         }elseif($response_type == "token"){
             //implicit模式下
-            action_log("oauth2_implicit",null,null,$client_id);
+//            action_log("oauth2_implicit",null,null,$client_id);
             $this->implicit();
 
         }else{
