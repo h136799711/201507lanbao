@@ -2,8 +2,7 @@
 /**
  * (c) Copyright 2014 hebidu. All Rights Reserved. 
  */
- 
-defined("BOYE_SYS_NAME") or die("未定义");
+
 
 return  array(
     'LOG_TYPE'              =>  'Db',

@@ -8,6 +8,7 @@
 namespace Api\Controller;
 
 use Common\Api\AccountApi;
+use Uclient\Model\OAuth2TypeModel;
 
 class UserController extends ApiController{
 
@@ -35,8 +36,9 @@ class UserController extends ApiController{
      */
     public  function login_post(){
 
-        $username = I("post.username",'');
-        $password = I('post.password','');
+        $username = $this->_post("username");
+
+        $password = $this->_post("password");
 
         $result = apiCall(AccountApi::LOGIN,array($username,$password));
 
@@ -44,11 +46,87 @@ class UserController extends ApiController{
             $uid = $result['info'];
             $result = apiCall(AccountApi::GET_INFO,array($uid));
 
-            $this->apiReturnSuc($result['info'],"json");
+            $this->apiReturnSuc($result['info']);
         }else{
-            $this->apiReturnErr($result['info'],"json");
+            $this->apiReturnErr($result['info']);
         }
 
     }
+
+    /**
+     * POST: 注册
+     */
+    public function register(){
+
+        if(IS_POST){
+
+            $username = $this->_post("username");
+            $password = $this->_post("password");
+            $from = OAuth2TypeModel::SELF;
+
+            $entity = array(
+                'username'=>$username,
+                'password'=>$password,
+                'from'=>$from,
+            );
+
+            $result = apiCall(AccountApi::REGISTER,array($entity));
+
+            if($result['status']){
+                $this->apiReturnSuc($result['info']);
+            }else{
+                $this->apiReturnErr($result['info']);
+            }
+        }else{
+            $this->apiReturnErr("只支持POST请求!");
+        }
+
+    }
+
+    /**
+     * 用户信息更新
+     */
+    public function update(){
+        if(IS_POST){
+            $sex = $this->_post('sex',0);
+            $nickname= $this->_post('nickname','');
+            $signature = $this->_post("signature",'');
+            $birthday = $this->_post('birthday',date("Y-m-d",time()));
+            $height = $this->_post('height',0);
+            $weight = $this->_post('weight',0);
+            $target_weight = $this->_post('target_weight',0);
+
+            $uid = $this->_post('uid',0);
+            $entity = array(
+                'nickname'=>$nickname,
+                'height'=>$height,
+                'weight'=>$weight,
+                'sex'=>$sex,
+                'target_weight'=>$target_weight,
+                'birthday'=>$birthday,
+                'signature'=>$signature,
+            );
+            $result = apiCall(AccountApi::UPDATE,array($uid,$entity));
+
+            if($result['status']){
+                $this->apiReturnSuc("操作成功！");
+            }else{
+                $this->apiReturnErr($result['info']);
+            }
+        }
+    }
+
+    public function avatar_post(){
+
+        //TODO: 上传头像
+
+    }
+
+    /**
+     *
+     */
+//    public function checkEmail(){
+//
+//    }
 
 }

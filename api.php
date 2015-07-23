@@ -7,6 +7,7 @@
  */
 if (version_compare(PHP_VERSION, '5.3.0', '<')) die('require PHP > 5.3.0 !');
 
+define('BOYE_SYS_NAME',true);
 define("PROJECT_NAME","201507lanbao");
 
 //应用模式Api

@@ -155,8 +155,10 @@ abstract class Api {
 	 * 根据id保存数据
 	 */
 	public function saveByID($ID, $entity) {
+        if(!$ID || $ID < 0){
+            return $this -> apiReturnErr("ID参数错误!");
+        }
 		unset($entity['id']);
-
 		return $this -> save(array('id' => $ID), $entity);
 	}
 

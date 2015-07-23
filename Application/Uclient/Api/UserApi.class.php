@@ -104,8 +104,9 @@ class UserApi extends Api
      * @param  string $password 用户密码|明文
      * @param  string $email 用户邮箱
      * @param  string $mobile 用户手机号码
-     * @param int $from 第三方Oauth2登录\注册来源
+     * @param int $regFrom
      * @return array 注册失败-错误信息
+     * @internal param int $from 第三方Oauth2登录\注册来源
      */
     public function register($username, $password, $email, $mobile = '', $regFrom = 0)
     {
@@ -124,7 +125,7 @@ class UserApi extends Api
         if (empty($data['mobile'])) unset($data['mobile']);
         //验证邮箱
         if (empty($data['email'])) unset($data['email']);
-//        $this->model->startTrans();
+
         $uid = 0;
         $error = "";
         /* 添加Ucenter_member用户 */
@@ -138,20 +139,12 @@ class UserApi extends Api
             $error = $this->model->getError();
             $error = $this->getRegisterError($error);
         }
-        /* 添加common_member用户 */
 
-//        if($uid > 0){
-            //ucenter_member添加成功了
-//        }
         //
         if (empty($error)) {
-//            $this->model->commit();
             return array('status' => true, 'info' => $uid);
-//            return $this->apiReturnSuc($uid);
         } else {
-//            $this->model->rollback();
             return array('status' => false, 'info' => $error);
-//            return $this->apiReturnErr($error);
         }
 
     }

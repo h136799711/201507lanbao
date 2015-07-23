@@ -23,7 +23,9 @@ use Uclient\Model\OAuth2TypeModel;
  */
 class TestAccountApiController extends RestController {
 
-    public function testLogin(){
+    public function __construct(){
+        parent::__construct();
+
         $client_id = C('CLIENT_ID');
         $client_secret = C('CLIENT_SECRET');
         $config = array(
@@ -36,6 +38,17 @@ class TestAccountApiController extends RestController {
             $this->assign("access_token",$access_token['info']);
         }
         $this->assign("error",$access_token);
+    }
+
+    public function testLogin(){
+        $this->display();
+    }
+
+    public function testRegister(){
+        $this->display();
+    }
+
+    public function testUpdate(){
         $this->display();
     }
 

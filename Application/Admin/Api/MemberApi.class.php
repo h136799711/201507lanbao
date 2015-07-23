@@ -21,10 +21,6 @@ class MemberApi extends Api{
      * 保存
      */
     const SAVE = "Admin/Member/save";
-    /**
-     * 保存根据ID主键
-     */
-    const SAVE_BY_ID = "Admin/Member/saveByID";
 
     /**
      * 删除

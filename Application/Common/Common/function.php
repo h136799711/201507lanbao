@@ -38,7 +38,11 @@ function is_administrator($uid = null) {
  */
 function apiCall($url, $vars=array(), $layer = 'Api') {
 	//TODO:考虑使用func_get_args 获取参数数组
-	return R($url, $vars, $layer);
+    $ret = R($url, $vars, $layer);
+    if(!$ret){
+        return array('status'=>false,'info'=>'无法调用'.$url);
+    }
+	return $ret;
 }
 
 /**

@@ -20,10 +20,6 @@ class ResourceController extends RestController{
     // REST允许请求的资源类型列表
     protected   $allowType      =   array('json');
 
-    public function test(){
-        dump($this->authorize());
-    }
-
     public function authorize(){
 
         $api = new OAuth2Service();

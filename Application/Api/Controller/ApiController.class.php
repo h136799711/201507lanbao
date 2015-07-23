@@ -9,9 +9,6 @@
 namespace Api\Controller;
 
 
-use Admin\Model\LogModel;
-use Api\Service\EncryptService;
-use Common\Model\WeixinLogModel;
 use Think\Controller\RestController;
 
 /**
@@ -46,9 +43,7 @@ abstract class ApiController extends RestController{
         }
 
         $_GET['access_token'] = $access_token;
-        //TODO: 对传输数据进行解密
-//        $data = $_POST['data'];
-//        $_POST = array_merge($_POST,$data);
+        //TODO: 对POST过来的传输数据进行解密,并将解密后的数据放入$_POST变量中
 
         $resCtrl = new ResourceController();
 
@@ -82,8 +77,13 @@ abstract class ApiController extends RestController{
      * @internal param $i
      */
     protected function apiReturnErr($data,$code=-1){
-         $this->ajaxReturn(array('code'=>$code,'data'=>$data));
+        $this->ajaxReturn(array('code'=>$code,'data'=>$data));
     }
+
+    public function _post($key,$default=''){
+        return I("post.".$key,$default);
+    }
+
 
     abstract function getSupportMethod();
 

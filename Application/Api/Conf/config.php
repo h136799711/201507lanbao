@@ -17,4 +17,5 @@ return array(
     'DB_PWD'                    =>  '1',//bo-ye2015BO-YE
     'DB_PORT'                   =>  '3306',
     'DB_PREFIX'                 =>  'itboye_',
+
 );

@@ -10,24 +10,13 @@ namespace Common\Api;
 
 use Admin\Api\MemberApi;
 use Uclient\Api\UserApi;
-use Weixin\Api\WxuserApi;
-
-interface IAccount
-{
-
-    function login($username, $password,$type='1',$from='');
-
-    function register($entity);
-    //根据用户ID获取信息
-    function getInfo($id);
-}
 
 /**
  * 本系统账号相关操作统一接口
  * Class AccountApi
  * @package Common\Api
  */
-class AccountApi implements IAccount
+class AccountApi
 {
 
     /**
@@ -42,6 +31,27 @@ class AccountApi implements IAccount
      * 获取用户信息
      */
     const GET_INFO = "Common/Account/getInfo";
+    /**
+     * 更新用户信息
+     */
+    const UPDATE = "Common/Account/update";
+
+    public function update($id,$entity){
+
+        $update_entity = array(
+            'nickname'=>$entity['nickname'],
+            'height'=>$entity['height'],
+            'weight'=>$entity['weight'],
+            'sex'=>$entity['sex'],
+            'target_weight'=>$entity['target_weight'],
+            'birthday'=>$entity['birthday'],
+            'signature'=>$entity['signature'],
+        );
+
+        $result = apiCall(MemberApi::SAVE,array(array('uid'=>$id),$update_entity));
+
+        return $result;
+    }
 
     public function getInfo($id){
 
@@ -63,14 +73,6 @@ class AccountApi implements IAccount
         }
 
         $member_info = $result['info'];
-
-//        $result = apiCall(WxuserApi::GET_INFO, array(array('id'=>$id)));
-//
-//        if(!$result['status']){
-//            return array('status' => false, 'info' => $result['info']);
-//        }
-//
-//        $wxuser_info = $result['info'];
 
         $info = array_merge($user_info,$member_info);
         unset($info['status']);
@@ -96,7 +98,6 @@ class AccountApi implements IAccount
      */
     public function login($username, $password,$type='1',$from='')
     {
-
         $result = apiCall(UserApi::LOGIN,array($username,$password,$type));
         $notes = "[用户".$username.",类型：".$type."],调用登录接口";
         addLog("/Account/login","","",$notes);
@@ -111,14 +112,15 @@ class AccountApi implements IAccount
     public function register($entity)
     {
 
+
         if (!isset($entity['username']) || !isset($entity['password']) || !isset($entity['from'])) {
             return array('status' => false, 'info' => "账户信息缺失!");
         }
 
-        $empty_check = array('nickname','avatar','province','country','city');
+        $empty_check = array('nickname','avatar','province','country','city','sex');
         foreach($empty_check as $vo){
             if(!isset($wxuser[$vo])){
-                $wxuser[$vo] = '';
+                $entity[$vo] = '';
             }
         }
 
@@ -127,12 +129,12 @@ class AccountApi implements IAccount
         $email = $entity['email'];
         $mobile = $entity['mobile'];
         $from = $entity['from'];
-
         $trans = M();
         $trans->startTrans();
         $error = "";
         $flag = false;
         $result = apiCall(UserApi::REGISTER, array($username, $password, $email, $mobile, $from));
+
         $uid = 0;
         if ($result['status']) {
             $uid = $result['info'];
@@ -142,7 +144,7 @@ class AccountApi implements IAccount
                 'realname' => '',
                 'nickname' => '',
                 'idnumber' => '',
-                'sex' =>  $wxuser['sex'],
+                'sex' =>  0,
                 'birthday' => time(),
                 'qq' => '',
                 'score' => 0,
