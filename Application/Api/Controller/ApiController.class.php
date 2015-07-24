@@ -50,15 +50,14 @@ abstract class ApiController extends RestController{
         $result = $resCtrl->authorize();
 
         if($result['status'] !== 0){
-            $this->apiReturnErr($result['info']);
+
+            $this->apiReturnErr($result['info'],$result['status']);
         }
     }
 
 
     public function _empty(){
-//        $supportMethod = $this->getSupportMethod();
-        $data = array("status"=>404,'info'=>'访问地址错误!');
-        $this->response($data,"json","404");
+        $this->apiReturnErr("访问地址错误");
     }
 
     /**
@@ -67,7 +66,7 @@ abstract class ApiController extends RestController{
      * @internal param $i
      */
     protected function apiReturnSuc($data){
-         $this->ajaxReturn(array('code'=>0,'data'=>$data));
+         $this->ajaxReturn(array('code'=>0,'data'=>$data),"json");
     }
 
     /**
@@ -77,7 +76,7 @@ abstract class ApiController extends RestController{
      * @internal param $i
      */
     protected function apiReturnErr($data,$code=-1){
-        $this->ajaxReturn(array('code'=>$code,'data'=>$data));
+        $this->ajaxReturn(array('code'=>$code,'data'=>$data),"json");
     }
 
     public function _post($key,$default=''){
