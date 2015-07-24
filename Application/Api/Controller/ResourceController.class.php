@@ -29,7 +29,7 @@ class ResourceController extends RestController{
             $resp = $server->getResponse();
             $params = $resp->getParameters();
 
-            return array('status'=>$resp->getStatusCode(),'info'=>$params);//,"json");
+            return array('status'=>$resp->getStatusCode(),'info'=>$params['error_description']);//,"json");
         }
 
         return array('status'=>0,'info'=>'你通过了Api的验证');//,"json");
