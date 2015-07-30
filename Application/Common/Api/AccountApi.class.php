@@ -75,6 +75,8 @@ class AccountApi
         $member_info = $result['info'];
 
         $info = array_merge($user_info,$member_info);
+
+        $info['uid'] = $info['id'];
         unset($info['status']);
         unset($info['id']);
         unset($info['login']);
@@ -99,8 +101,6 @@ class AccountApi
     public function login($username, $password,$type='1',$from='')
     {
         $result = apiCall(UserApi::LOGIN,array($username,$password,$type));
-        $notes = "[用户".$username.",类型：".$type."],调用登录接口";
-        addLog("/Account/login","","",$notes);
         return $result;
     }
 
@@ -145,7 +145,7 @@ class AccountApi
                 'nickname' => '',
                 'idnumber' => '',
                 'sex' =>  0,
-                'birthday' => time(),
+                'birthday' => date('Y-m-d',time()),
                 'qq' => '',
                 'score' => 0,
                 'login' => 0,

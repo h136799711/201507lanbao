@@ -42,6 +42,11 @@ class AccessTokensApi extends Api{
      */
     const QUERY = "OAuth2Manage/AccessTokens/query";
 
+    /**
+     * 查询数据
+     */
+    const GET_INFO = "OAuth2Manage/AccessTokens/getInfo";
+
 
     protected function _init(){
         $this->model = new AccessTokensModel();

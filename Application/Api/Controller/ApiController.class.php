@@ -9,6 +9,7 @@
 namespace Api\Controller;
 
 
+use OAuth2Manage\Api\AccessTokensApi;
 use Think\Controller\RestController;
 
 /**
@@ -21,6 +22,7 @@ use Think\Controller\RestController;
 abstract class ApiController extends RestController{
 
     private $encrypt_key = "";
+    private $client_id = "";
     /**
      * 构造函数
      */
@@ -50,8 +52,11 @@ abstract class ApiController extends RestController{
         $result = $resCtrl->authorize();
 
         if($result['status'] !== 0){
-
             $this->apiReturnErr($result['info'],$result['status']);
+        }
+        $result = apiCall(AccessTokensApi::GET_INFO,array(array('access_token'=>$access_token)));
+        if($result['status']){
+            $this->client_id = $result['info']['client_id'];
         }
     }
 

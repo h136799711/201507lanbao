@@ -14,6 +14,14 @@
 
 function addLog($api_uri,$get,$post,$notes){
     $model = M('ApiCallHis');
+
+    if(is_array($get)){
+        $get = json_encode($get);
+    }
+    if(is_array($post)){
+        $post = json_encode($post);
+    }
+
     $result = $model->create(array(
         'api_uri'=>$api_uri,
         'call_get_args'=>$get,

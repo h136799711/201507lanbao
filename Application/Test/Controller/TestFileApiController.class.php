@@ -23,6 +23,15 @@ use Uclient\Model\OAuth2TypeModel;
  */
 class TestFileApiController extends RestController {
 
+    public function test(){
+        $url = ".3432432./4534.dasffa...jpg.png";
+        $arr = parse_url($url);
+
+        $file = basename($arr['path']);
+        $ext = explode(".",$file);
+        dump($ext[count($ext)-1]);
+    }
+
     public function __construct(){
         parent::__construct();
 

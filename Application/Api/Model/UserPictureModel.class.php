@@ -49,7 +49,12 @@ class UserPictureModel extends Model{
                 }
 				$value = array_merge($value,$extInfo);
 				$value['ori_name'] = $value['name'];
-                $value['ext'] =
+                $arr = parse_url($value['ori_name']);
+
+                $file = basename($arr['path']);
+                $ext = explode(".",$file);
+
+                $value['ext'] = $ext[count($ext)-1];
                 /* 记录文件信息 */
                 $value['path'] = substr($setting['rootPath'], 1).$value['savepath'].$value['savename'];	//在模板里的url路径
 
@@ -61,6 +66,8 @@ class UserPictureModel extends Model{
                     unset($info[$key]);
                 }
             }
+
+
             return $info; //文件上传成功
         } else {
             $this->error = $Upload->getError();

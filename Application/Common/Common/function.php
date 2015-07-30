@@ -444,7 +444,7 @@ function fsockopenRequest($url,$post_data = array(),$method="POST", $cookie = ar
 	}else{
 		$header .= "\r\n";
 	}
-	dump($header);
+//	dump($header);
 	fwrite($fp, $header);
 	//TODO: 从返回结果来判断是否成功
 	//		$result = "";
@@ -487,11 +487,9 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
     if(empty($user_id)){
         $user_id = is_login();
     }
-	
-	
+
     //查询行为,判断是否执行
     $action_info = apiCall(\Admin\Api\ActionApi::GET_INFO, array(array("name"=>$action)));
-
     if($action_info['status'] && is_array($action_info['info'])  && $action_info['info']['status'] != 1){
     		
         return '该行为被禁用或删除';
@@ -513,15 +511,16 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
             $log['model']   =   $model;
             $log['time']    =   NOW_TIME;
             $log['data']    =   array('user'=>$user_id,'model'=>$model,'record'=>$record_id,'time'=>NOW_TIME);
+            $replace = array();
             foreach ($match[1] as $value){
                 $param = explode('|', $value);//分割字符串通过|
+
                 if(isset($param[1])){
                     $replace[] = call_user_func($param[1],$log[$param[0]]);//调用函数
                 }else{
                     $replace[] = $log[$param[0]];
                 }
             }
-			
             $data['remark'] =   str_replace($match[0], $replace, $action_info['log']);
         }else{
             $data['remark'] =   $action_info['log'];
@@ -530,13 +529,13 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         //未定义日志规则，记录操作url
         $data['remark']     =   '操作url：'.$_SERVER['REQUEST_URI'];
     }
-	
 	$result = apiCall(\Admin\Api\ActionLogApi::ADD, array($data));
 	
 	if(!$result['status']){
 		LogRecord("记录操作日志失败!", $result['info']);
 	}
-//  M('ActionLog')->add($data);
+
+//    M('ActionLog','common_')->add($data);
 		
     if(!empty($action_info['rule'])){
         //解析行为
@@ -585,7 +584,7 @@ function parse_action($action = null, $self){
         return false;
     }
 	
-    //解析规则:table:$table|field:$field|condition:$condition|rule:$rule[|cycle:$cycle|max:$max][;......]
+    //解析规则:prefix:common_|table:$table|field:$field|condition:$condition|rule:$rule[|cycle:$cycle|max:$max][;......]
     $rules = $info['rule'];
     $rules = str_replace('{$self}', $self, $rules);
     $rules = explode(';', $rules);
@@ -616,12 +615,12 @@ function parse_action($action = null, $self){
  *
  */
 function execute_action($rules = false, $action_id = null, $user_id = null){
-	
+
     if(!$rules || empty($action_id) || empty($user_id)){
         return false;
     }
-
     $return = true;
+
     foreach ($rules as $rule){
 		
         //检查执行周期
@@ -630,22 +629,28 @@ function execute_action($rules = false, $action_id = null, $user_id = null){
 		
 		//统计执行次数
         $exec_count = M('ActionLog','common_')->where($map)->count();
+
         if($exec_count > $rule['max']){
             continue;
         }
-		
+
+        $prefix = $rule['prefix'];
         //执行数据库操作
-        $Model = D(ucfirst($rule['table']));
+        if(empty($prefix)){
+            $Model = D(ucfirst($rule['table']));
+        }else{
+            $Model = M(ucfirst($rule['table']),$prefix);
+        }
         $field = $rule['field'];
         $res = $Model->where($rule['condition'])->setField($field, array('exp', $rule['rule']));
-		
-//		dump($Model);
+
         if(!$res){
             $return = false;
         }
     }
     return $return;
 }
+
 
 /**
  * 时间戳格式化

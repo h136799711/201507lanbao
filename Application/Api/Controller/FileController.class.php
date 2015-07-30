@@ -10,6 +10,7 @@ namespace Api\Controller;
 
 
 
+use Think\Image;
 use Uclient\Api\UserApi;
 
 class FileController extends ApiController
@@ -22,6 +23,9 @@ class FileController extends ApiController
     public function upload()
     {
 
+        $notes = "应用".$this->client_id."，调用上传接口";
+
+        addLog("File/upload",$_GET,$_POST,$notes);
         if (IS_POST) {
             $uid = $this->_post('uid',0);
             $type = $this->_post('type','');
@@ -38,6 +42,7 @@ class FileController extends ApiController
             if(!$result['status']){
                 $this->apiReturnErr("用户ID不存在!");
             }
+            addWeixinLog($_FILES,"FILES");
             if(!isset($_FILES['image'])){
                 $this->apiReturnErr("文件对象必须为image!");
             }
@@ -67,6 +72,9 @@ class FileController extends ApiController
 
         }
     }
+
+
+
 
     public function getSupportMethod(){
 
