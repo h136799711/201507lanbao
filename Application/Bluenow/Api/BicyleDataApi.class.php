@@ -16,7 +16,12 @@ class BicyleDataApi extends Api {
 
     /**
      *
-     * 删除
+     * 每月数据
+     */
+    const MONTHLY_DATA = "Bluenow/BicyleData/monthlyData";
+    /**
+     *
+     * 统计数目
      */
     const COUNT = "Bluenow/BicyleData/count";
     /**
@@ -62,4 +67,17 @@ class BicyleDataApi extends Api {
     {
         $this->model = new BicyleDataModel();
     }
+
+    public function monthlyData($where){
+
+        $list = $this->model->field("max(calorie) as max_calorie,upload_day")->where($where)->group("upload_day")->order("upload_day asc")->select();
+//        dump($list);
+//        exit();
+        if($list === false){
+           return $this->apiReturnErr($this->model->getDbError());
+        }else{
+           return $this->apiReturnSuc($list);
+        }
+    }
+
 }

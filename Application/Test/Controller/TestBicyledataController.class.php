@@ -39,4 +39,8 @@ class TestBicyledataController extends Controller{
         $this->display();
     }
 
+    public function testMonth(){
+        $this->display();
+    }
+
 }

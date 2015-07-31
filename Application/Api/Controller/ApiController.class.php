@@ -23,6 +23,11 @@ abstract class ApiController extends RestController{
 
     private $encrypt_key = "";
     private $client_id = "";
+
+    public function _empty(){
+        $this->ajaxReturn(array('code'=>404,'data'=>'找不到此资源！'),"json");
+    }
+
     /**
      * 构造函数
      */
@@ -58,11 +63,6 @@ abstract class ApiController extends RestController{
         if($result['status']){
             $this->client_id = $result['info']['client_id'];
         }
-    }
-
-
-    public function _empty(){
-        $this->apiReturnErr("访问地址错误");
     }
 
     /**

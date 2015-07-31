@@ -73,9 +73,6 @@ class FileController extends ApiController
         }
     }
 
-
-
-
     public function getSupportMethod(){
 
     }

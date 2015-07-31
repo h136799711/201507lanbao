@@ -14,6 +14,43 @@ use Bluenow\Api\BicyleDataApi;
 
 class BicyleController extends ApiController{
 
+    //查询月份数据
+    public function month(){
+
+        $time = $this->_post('time',0);
+        $uid = $this->_post('uid',0);
+        $uuid = $this->_post('uuid',0);
+
+        if(empty($uid) || empty($uuid)){
+            $this->apiReturnErr("缺失用户ID或设备ID!");
+        }
+
+        if($time <= 0){
+            $this->apiReturnErr("时间参数不合法!");
+        }
+
+        $time = intval($time);
+
+        $year = date('Y',$time);
+        $month = date('m',$time);
+
+        $where = array(
+            'uid'=>$uid,
+            'uuid'=>$uuid,
+            'upload_year'=>$year,
+            'upload_month'=>$month,
+        );
+
+        $list = apiCall(BicyleDataApi::MONTHLY_DATA,array($where));
+
+        if($list['status']){
+            $this->apiReturnSuc($list['info']);
+        }else{
+            $this->apiReturnErr($list['info']);
+        }
+
+    }
+
 
     public function day(){
         //每天0时
@@ -100,7 +137,7 @@ class BicyleController extends ApiController{
                 continue;
             }
 
-            if($vo['total_distance'] > $ret['total_distance'] ){
+            if($vo['calorie'] > $ret['calorie'] ){
                 $ret = $vo;
             }
 
@@ -129,8 +166,12 @@ class BicyleController extends ApiController{
         $cost_time = $this->_post('cost_time',0);
         //卡路里
         $calorie = $this->_post('calorie',0);
-        //卡路里
+        //上报时间
         $upload_time = $this->_post('upload_time',0);
+
+        //目标消耗卡路里
+        $target_calorie = $this->_post('target_calorie',0);
+
 
         $entity = array(
             'uid'=>$uid,
@@ -145,6 +186,7 @@ class BicyleController extends ApiController{
             'upload_day'=>date('d',$upload_time),
             'upload_month'=>date('m',$upload_time),
             'upload_year'=>date('Y',$upload_time),
+            'target_calorie'=>$target_calorie,
         );
 
         $result = apiCall(BicyleDataApi::ADD,array($entity));
