@@ -109,6 +109,7 @@ class PublicController extends BaseController {
      * 测试账号
      */
     private $test_account = array(
+        'lanbao'=>array('pwd'=>'123456','roledesc'=>'蓝堡后台管理员'),
         'itboye'=>array('pwd'=>'1','roledesc'=>'总管理员'),
     );
 
