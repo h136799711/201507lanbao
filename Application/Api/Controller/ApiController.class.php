@@ -21,11 +21,11 @@ use Think\Controller\RestController;
  */
 abstract class ApiController extends RestController{
 
-    private $encrypt_key = "";
-    private $client_id = "";
+    protected $encrypt_key = "";
+    protected $client_id = "";
 
     public function _empty(){
-        $this->ajaxReturn(array('code'=>404,'data'=>'找不到此资源！'),"json");
+        $this->ajaxReturn(array('code'=>404,'data'=>'找不到此资源！TESTT_TEST_TEST_'),"json");
     }
 
     /**

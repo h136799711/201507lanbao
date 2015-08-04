@@ -14,7 +14,7 @@ use Think\Controller;
 class EmptyController extends Controller{
 
     public function index(){
-        $this->ajaxReturn(array('code'=>404,'data'=>'找不到此资源！'),"json");
+        $this->ajaxReturn(array('code'=>404,'data'=>'EMPTY找不到此资源！'),"json");
     }
 
 }

@@ -53,10 +53,13 @@ class BicyleController extends ApiController{
 
 
     public function day(){
+
+
         //每天0时
         $time = $this->_post('time',0);
         $uid = $this->_post('uid',0);
         $uuid = $this->_post('uuid',0);
+        $time = intval($time);
         if($time == 0){
             $this->apiReturnErr("缺失时间参数!");
         }
@@ -64,10 +67,13 @@ class BicyleController extends ApiController{
         if(empty($uid) || empty($uuid)){
             $this->apiReturnErr("缺失用户ID或设备ID!");
         }
+        $notes = "应用".$this->client_id.":[用户".$uid."],调用动感数据单天获取";
+
+        addLog("Bicyle/day",$_GET,$_POST,$notes);
 
         $year = date('Y',$time);
-        $month = date('m',$time);
-        $day = date('d',$time);
+        $month = date('n',$time);
+        $day = date('j',$time);
 
         $where = array(
             'uid'=>$uid,
@@ -76,10 +82,19 @@ class BicyleController extends ApiController{
             'upload_month'=>$month,
             'upload_day'=>$day,
         );
+        addWeixinLog($where,"BicyleDataApi");
 
-//        dump($where);
+        $count = 0;
+        $result = apiCall(BicyleDataApi::COUNT,array($where));
+        if($result['status']){
+            $count = $result['info'];
+        }
+        else{
+            LogRecord($result['info'],__FILE__.__LINE__);
+            $this->apiReturnErr($result['info']);
+        }
 
-        $count = apiCall(BicyleDataApi::COUNT,array($where));
+        addWeixinLog($count,"bicyleData");
 
         $ret = array(
             'speed'=>0,
@@ -102,10 +117,12 @@ class BicyleController extends ApiController{
 
         if($count < $size){
             $list = apiCall(BicyleDataApi::QUERY_NO_PAGING,array($where,$order));
+            addWeixinLog($list,"bicyleData");
             if($list['status']){
                 $list = $list['info'];
             }
             else{
+                LogRecord($list['info'],__FILE__.__LINE__);
                 $this->apiReturnErr($list['info']);
             }
         }else{
@@ -117,15 +134,19 @@ class BicyleController extends ApiController{
             }
         }
 
-        $max = $this->findMax($list);
-        if(empty($max)){
-            $max = $ret;
-        }
-        $this->apiReturnSuc($max);
+//        $max = $this->findMax($list);
+//        if(empty($max)){
+//            $max = $ret;
+//        }
+        $this->apiReturnSuc("max");
 
     }
 
     protected function findMax($list){
+
+        if(empty($list)){
+            return null;
+        }
 
         $ret = $list[0];
 
@@ -151,6 +172,8 @@ class BicyleController extends ApiController{
      * 动感单车数据上报.
      */
     public function add(){
+
+
         //TODO: 数据上报
         $uid = $this->_post('uid',0);
         $uuid = $this->_post('uuid','');
@@ -172,6 +195,9 @@ class BicyleController extends ApiController{
         //目标消耗卡路里
         $target_calorie = $this->_post('target_calorie',0);
 
+        $notes = "应用".$this->client_id.":[用户".$uid."],调用动感数据上报接口";
+
+        addLog("Bicyle/add",$_GET,$_POST,$notes);
 
         $entity = array(
             'uid'=>$uid,

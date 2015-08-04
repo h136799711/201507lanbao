@@ -42,7 +42,7 @@ class FileController extends ApiController
             if(!$result['status']){
                 $this->apiReturnErr("用户ID不存在!");
             }
-            addWeixinLog($_FILES,"FILES");
+//            addWeixinLog($_FILES,"FILES");
             if(!isset($_FILES['image'])){
                 $this->apiReturnErr("文件对象必须为image!");
             }
