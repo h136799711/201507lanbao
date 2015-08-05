@@ -25,7 +25,7 @@ abstract class ApiController extends RestController{
     protected $client_id = "";
 
     public function _empty(){
-        $this->ajaxReturn(array('code'=>404,'data'=>'找不到此资源！TESTT_TEST_TEST_'),"json");
+        $this->ajaxReturn(array('code'=>404,'data'=>'找不到此资源_方法！'),"json");
     }
 
     /**
@@ -41,6 +41,11 @@ abstract class ApiController extends RestController{
     }
 
     protected function _init(){
+
+        if(APP_DEBUG){
+            
+        }
+
         $access_token = I("get.access_token");
         if(empty($access_token)){
             $access_token = I("post.access_token");

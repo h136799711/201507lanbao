@@ -17,7 +17,11 @@ return  array(
     'URL_CASE_INSENSITIVE'  =>  false,  // URL区分大小写
     'SHOW_PAGE_TRACE'           =>  false, //显示调试信息
      // 数据库配置
-     
+    'TMPL_CONTENT_TYPE'     =>  'text/html', // 默认模板输出类型
+    'TMPL_ACTION_ERROR'     =>  THINK_PATH.'Tpl/dispatch_jump.tpl', // 默认错误跳转对应的模板文件
+    'TMPL_ACTION_SUCCESS'   =>  THINK_PATH.'Tpl/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
+    'TMPL_EXCEPTION_FILE'   =>  THINK_PATH.'Tpl/think_exception.tpl',// 异常页面的模板文件
+
 //  'DB_TYPE'                   =>  'mysql',
 //  'DB_HOST'                   =>  '127.0.0.1',//rdsrrbifmrrbifm.mysql.rds.aliyuncs.com
 //  'DB_NAME'                   =>  'boye_2015_05_26_10_15_13', //boye_ceping

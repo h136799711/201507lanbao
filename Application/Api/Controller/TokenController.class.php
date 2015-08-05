@@ -10,6 +10,7 @@ namespace Api\Controller;
 use Api\Service\OAuth2Service;
 use OAuth2\Request;
 use Think\Controller\RestController;
+use Think\Exception;
 use Think\Log;
 
 class TokenController extends RestController{
@@ -20,6 +21,7 @@ class TokenController extends RestController{
     protected   $allowType      =   array('json');
 
     public function index(){
+
         $grant_type = I('get.grant_type','');
         if(empty($grant_type)){
             $grant_type = I('post.grant_type','');
@@ -35,7 +37,7 @@ class TokenController extends RestController{
 
         $notes = $client_id."调用接口";
 
-        addLog('/Api/Token/index',serialize(I('get.')),serialize(I('post.')),$notes);
+        addLog('/Token/index',serialize(I('get.')),serialize(I('post.')),$notes);
 //        sleep(2);
 
         $this->credentials($grant_type);
