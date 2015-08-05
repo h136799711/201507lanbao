@@ -134,11 +134,11 @@ class BicyleController extends ApiController{
             }
         }
 
-//        $max = $this->findMax($list);
-//        if(empty($max)){
-//            $max = $ret;
-//        }
-        $this->apiReturnSuc("max");
+        $max = $this->findMax($list);
+        if(empty($max)){
+            $max = $ret;
+        }
+        $this->apiReturnSuc($max);
 
     }
 
