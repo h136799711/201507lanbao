@@ -62,11 +62,6 @@ return array(
     // Session 配置
     'SESSION_PREFIX' => 'common_',
 
-    /* 模板引擎设置 */
-    'TMPL_CONTENT_TYPE'     =>  'application/json', // 默认模板输出类型
-    'TMPL_ACTION_ERROR'     =>  APP_PATH.'Api/View/JSON.json', // 默认错误跳转对应的模板文件
-    'TMPL_ACTION_SUCCESS'   =>  APP_PATH.'Api/View/JSON.json', // 默认成功跳转对应的模板文件
-    'TMPL_EXCEPTION_FILE'   =>  APP_PATH.'Api/View/JSON.json',// 异常页面的模板文件
 
     //权限配置
     'AUTH_CONFIG'=>array(

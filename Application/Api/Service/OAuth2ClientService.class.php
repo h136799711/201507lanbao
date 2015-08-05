@@ -19,7 +19,10 @@ class OAuth2ClientService {
         if(!isset($config['client_id']) || !isset($config['client_secret'])){
             E("必须填写client_id,client_secret缺少");
         }
-
+        if(!isset($config['site_url'])) {
+            E("缺少site_url参数!");
+        }
+        $this->site_url = $config['site_url'];
         $this->client_id = $config['client_id'];
         $this->client_secret = $config['client_secret'];
     }
@@ -29,7 +32,7 @@ class OAuth2ClientService {
      */
     public function getAccessToken(){
 
-        $url = $this->site_url. "/Api/Token/index";
+        $url = $this->site_url. "/Token/index";
 
         $data['grant_type'] = 'client_credentials';
         $data['client_id'] = $this->client_id;

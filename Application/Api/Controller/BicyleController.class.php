@@ -21,12 +21,16 @@ class BicyleController extends ApiController{
         $uid = $this->_post('uid',0);
         $uuid = $this->_post('uuid',0);
 
-        if(empty($uid) || empty($uuid)){
-            $this->apiReturnErr("缺失用户ID或设备ID!");
+        if($time <= 0){
+            $this->apiReturnErr("缺失时间参数!");
         }
 
-        if($time <= 0){
-            $this->apiReturnErr("时间参数不合法!");
+        if(empty($uid)){
+            $this->apiReturnErr("缺失用户ID!");
+        }
+
+        if(empty($uuid)){
+            $this->apiReturnErr("缺失设备ID!");
         }
 
         $time = intval($time);
@@ -60,13 +64,18 @@ class BicyleController extends ApiController{
         $uid = $this->_post('uid',0);
         $uuid = $this->_post('uuid',0);
         $time = intval($time);
-        if($time == 0){
+        if($time <= 0){
             $this->apiReturnErr("缺失时间参数!");
         }
 
-        if(empty($uid) || empty($uuid)){
-            $this->apiReturnErr("缺失用户ID或设备ID!");
+        if(empty($uid)){
+            $this->apiReturnErr("缺失用户ID!");
         }
+
+        if(empty($uuid)){
+            $this->apiReturnErr("缺失设备ID!");
+        }
+
         $notes = "应用".$this->client_id.":[用户".$uid."],调用动感数据单天获取";
 
         addLog("Bicyle/day",$_GET,$_POST,$notes);

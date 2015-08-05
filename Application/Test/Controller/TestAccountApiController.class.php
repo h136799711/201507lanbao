@@ -31,6 +31,7 @@ class TestAccountApiController extends RestController {
         $config = array(
             'client_id'=>$client_id,
             'client_secret'=>$client_secret,
+            'site_url'=>C("SITE_URL"),
         );
         $client = new OAuth2ClientService($config);
         $access_token = $client->getAccessToken();

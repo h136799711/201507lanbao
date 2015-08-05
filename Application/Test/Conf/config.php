@@ -8,6 +8,7 @@
 
 return array(
     'DEFAULT_THEME'=>"default",
+
 	'TMPL_PARSE_STRING'  =>array(
 //        '__CDN__' => __ROOT__.'/Public/cdn', // 更改默认的/Public 替换规则
         '__CDN__' => 'http://lanbao.cdn.itboye.com', // 更改默认的/Public 替换规则
@@ -17,6 +18,7 @@ return array(
     ),
 
     //测试用
+    'SITE_URL'=>'http://lanbao.itboye.com/api.php',
     'CLIENT_ID'=>'by559a8de1c325c1',
     'CLIENT_SECRET'=>'aedd16f80c192661016eebe3ac35a6e7',
 );

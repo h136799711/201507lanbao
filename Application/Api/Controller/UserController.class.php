@@ -36,7 +36,9 @@ class UserController extends ApiController{
      * @internal param post.username
      * @internal param post.password
      */
-    public  function login_post(){
+    public  function login(){
+
+        if(IS_POST){
 
 
         $username = $this->_post("username");
@@ -58,6 +60,7 @@ class UserController extends ApiController{
             $this->apiReturnErr($result['info']);
         }
 
+        }
     }
 
     /**
