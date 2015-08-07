@@ -185,6 +185,11 @@ class BicyleController extends ApiController{
 
         //TODO: 数据上报
         $uid = $this->_post('uid',0);
+
+
+        if($uid == 0){
+            $this->apiReturnErr("缺失UID参数!");
+        }
         $uuid = $this->_post('uuid','');
         //速度
         $speed = $this->_post('speed',0);
@@ -231,6 +236,73 @@ class BicyleController extends ApiController{
         }else{
             $this->apiReturnErr($result['info']);
         }
+
+    }
+
+    public function bestResult(){
+
+        $uid = $this->_post('uid',0);
+
+        if($uid == 0){
+            $this->apiReturnErr("缺失UID参数!");
+        }
+
+        $notes = "应用".$this->client_id.":[用户".$uid."],调用个人最好成绩";
+
+        addLog("Bicyle/add",$_GET,$_POST,$notes);
+        $entity = array(
+            'uid'=>$uid,
+        );
+
+        $result = apiCall(BicyleDataApi::BEST_RESULT,array($entity));
+
+        if($result['status']){
+            $this->apiReturnSuc($result['info']);
+        }else{
+            $this->apiReturnErr($result['info']);
+        }
+    }
+
+    public function total(){
+        $uid = $this->_post('uid',0);
+
+        if($uid == 0){
+            $this->apiReturnErr("缺失UID参数!");
+        }
+
+        //TODO: 缓存600秒
+//        S("Bicyle_total_result",null);
+        $result_data = S("Bicyle_total_result");
+        if($result_data == null){
+            $result_data = array();
+
+            $result = apiCall(BicyleDataApi::SUM_CALORIE,array($uid));
+            if($result['status']){
+                $result_data['sum_max_calorie'] = $result['info'][0]['sum_max_calorie'];
+            }else{
+                $this->apiReturnErr($result['info']);
+            }
+
+            $result = apiCall(BicyleDataApi::SUM_DISTANCE,array($uid));
+
+            if($result['status']){
+                $result_data['sum_max_distance'] = $result['info'][0]['sum_max_distance'];
+//                array_push($result_data,$result['info'][0]);
+            }else{
+                $this->apiReturnErr($result['info']);
+            }
+            $result = apiCall(BicyleDataApi::SUM_TIME,array($uid));
+
+            if($result['status']){
+                $result_data['sum_max_time'] = $result['info'][0]['sum_max_time'];
+//                array_push($result_data,$result['info'][0]);
+            }else{
+                $this->apiReturnErr($result['info']);
+            }
+
+            S('Bicyle_total_result',$result_data);
+        }
+        $this->apiReturnSuc($result_data);
 
     }
 

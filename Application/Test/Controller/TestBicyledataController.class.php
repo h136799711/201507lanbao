@@ -44,4 +44,11 @@ class TestBicyledataController extends Controller{
         $this->display();
     }
 
+    public function testMax(){
+        $this->display();
+    }
+    public function testTotal(){
+        $this->display();
+    }
+
 }

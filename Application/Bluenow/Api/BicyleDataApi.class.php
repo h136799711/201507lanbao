@@ -13,7 +13,33 @@ use Common\Api\Api;
 
 class BicyleDataApi extends Api {
 
+    /**
+     *
+     * 累加里程
+     */
+    const SUM_DISTANCE = "Bluenow/BicyleData/sum_distance";
+    /**
+     *
+     * 累加时间
+     */
+    const SUM_TIME = "Bluenow/BicyleData/sum_time";
 
+    /**
+     *
+     * 累加卡路里
+     */
+    const SUM_CALORIE = "Bluenow/BicyleData/sum_calorie";
+
+    /**
+     *
+     * 统计最好的3个成绩
+     */
+    const BEST_RESULT = "Bluenow/BicyleData/bestResult";
+    /**
+     *
+     * 统计最大
+     */
+    const MAX = "Bluenow/BicyleData/max";
     /**
      *
      * 每月数据
@@ -66,6 +92,53 @@ class BicyleDataApi extends Api {
     protected function _init()
     {
         $this->model = new BicyleDataModel();
+    }
+
+    public function sum_distance($uid){
+        $result = $this->model->query("select sum(sum_max_distance) as sum_max_distance from ( SELECT max(total_distance) as sum_max_distance FROM itboye_bicyle_data where `uid` = ".$uid." group by upload_day,upload_year,upload_month ) as tmp");
+        if($result === false){
+            return $this->apiReturnErr($this->model->getDbError());
+        }else{
+            return $this->apiReturnSuc($result);
+        }
+    }
+
+
+    public function sum_time($uid){
+        $result = $this->model->query("select sum(sum_max_time) as sum_max_time from ( SELECT max(cost_time) as sum_max_time FROM itboye_bicyle_data where `uid` = ".$uid." group by upload_day,upload_year,upload_month ) as tmp");
+        if($result === false){
+            return $this->apiReturnErr($this->model->getDbError());
+        }else{
+            return $this->apiReturnSuc($result);
+        }
+    }
+
+    public function sum_calorie($uid){
+        $result = $this->model->query("select sum(sum_max_calorie) as sum_max_calorie from ( SELECT max(calorie) as sum_max_calorie FROM itboye_bicyle_data where `uid` = ".$uid." group by upload_day,upload_year,upload_month ) as tmp");
+        if($result === false){
+            return $this->apiReturnErr($this->model->getDbError());
+        }else{
+            return $this->apiReturnSuc($result);
+        }
+    }
+
+    public function bestResult($where){
+        $result = $this->model->field('max(total_distance) as best_distance,max(calorie) as best_calorie,max(cost_time) as best_cost_time')->where($where)->select();
+        if($result === false){
+            return $this->apiReturnErr($this->model->getDbError());
+        }else{
+            return $this->apiReturnSuc($result);
+        }
+    }
+
+    public function max($where,$field){
+        $result = $this->model->where($where)->max($field);
+
+        if($result === false){
+            return $this->apiReturnErr($this->model->getDbError());
+        }else{
+            return $this->apiReturnSuc($result);
+        }
     }
 
     public function monthlyData($where){

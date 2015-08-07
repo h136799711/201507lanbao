@@ -37,7 +37,7 @@ class TokenController extends RestController{
 
         $notes = $client_id."调用接口";
 
-        addLog('/Token/index',serialize(I('get.')),serialize(I('post.')),$notes);
+        addLog('Token/index',serialize(I('get.')),serialize(I('post.')),$notes);
 //        sleep(2);
 
         $this->credentials($grant_type);

@@ -18,7 +18,7 @@ return array(
     ),
 
     //测试用
-    'SITE_URL'=>'http://lanbao.itboye.com/api.php',
+    'SITE_URL'=>'http://localhost/github/201507lanbao/api.php',
     'CLIENT_ID'=>'by559a8de1c325c1',
     'CLIENT_SECRET'=>'aedd16f80c192661016eebe3ac35a6e7',
 );

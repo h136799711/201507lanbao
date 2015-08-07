@@ -12,9 +12,9 @@ return array(
 
 //    /* 调试错误时，可以注释掉下面TMPL */
     'TMPL_CONTENT_TYPE'     =>  'application/json', // 默认模板输出类型
-    'TMPL_ACTION_ERROR'     =>  APP_PATH.'Api/View/JSON.json', // 默认错误跳转对应的模板文件
-    'TMPL_ACTION_SUCCESS'   =>  APP_PATH.'Api/View/JSON.json', // 默认成功跳转对应的模板文件
-    'TMPL_EXCEPTION_FILE'   =>  APP_PATH.'Api/View/JSON.json',// 异常页面的模板文件
+//    'TMPL_ACTION_ERROR'     =>  APP_PATH.'Api/View/JSON.json', // 默认错误跳转对应的模板文件
+//    'TMPL_ACTION_SUCCESS'   =>  APP_PATH.'Api/View/JSON.json', // 默认成功跳转对应的模板文件
+//    'TMPL_EXCEPTION_FILE'   =>  APP_PATH.'Api/View/JSON.json',// 异常页面的模板文件
 
     'SESSION_AUTO_START'=>false,
     'DEFAULT_THEME'=>'default',

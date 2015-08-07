@@ -46,6 +46,7 @@ class AccountApi
             'target_weight'=>$entity['target_weight'],
             'birthday'=>$entity['birthday'],
             'signature'=>$entity['signature'],
+            'avatar_id'=>$entity['avatar_id'],
         );
 
         $result = apiCall(MemberApi::SAVE,array(array('uid'=>$id),$update_entity));
@@ -66,7 +67,7 @@ class AccountApi
             return array('status'=>true,'info'=>"用户不存在或被禁用!");
         }
 
-        $result = apiCall(MemberApi::GET_INFO, array(array('id'=>$id)));
+        $result = apiCall(MemberApi::GET_INFO, array(array('uid'=>$id)));
 
         if(!$result['status']){
             return array('status' => false, 'info' => $result['info']);

@@ -111,11 +111,11 @@ class UserController extends ApiController{
             $sex = $this->_post('sex',0);
             $nickname= $this->_post('nickname','');
             $signature = $this->_post("signature",'');
-            $birthday = $this->_post('birthday',date("Y-m-d",time()));
+            $birthday = $this->_post('birthday',date('Y-M-d',time()));
             $height = $this->_post('height',0);
             $weight = $this->_post('weight',0);
             $target_weight = $this->_post('target_weight',0);
-
+//            $avatar_id = $this->_post('avatar_id',0);
             $uid = $this->_post('uid',0);
             $entity = array(
                 'nickname'=>$nickname,
@@ -125,12 +125,15 @@ class UserController extends ApiController{
                 'target_weight'=>$target_weight,
                 'birthday'=>$birthday,
                 'signature'=>$signature,
+                'avatar_id'=>0,
             );
+
             $result = apiCall(AccountApi::UPDATE,array($uid,$entity));
 
             if($result['status']){
                 $this->apiReturnSuc("操作成功！");
             }else{
+                LogRecord($result['info'],__FILE__.__LINE__);
                 $this->apiReturnErr($result['info']);
             }
         }

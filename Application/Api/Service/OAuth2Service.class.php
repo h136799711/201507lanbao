@@ -33,7 +33,7 @@ class OAuth2Service {
     const IMPLICIT = "implicit";
 
     /**
-     * 客服端授权模式
+     * 客户端授权模式
      * http://www.dannysite.com/blog/181/
      * http://bshaffer.github.io/oauth2-server-php-docs/grant-types/client-credentials/
      */
