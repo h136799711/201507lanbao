@@ -2,19 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: hebidu
- * Date: 15/7/8
- * Time: 16:34
+ * Date: 15/8/7
+ * Time: 23:18
  */
 
-namespace Api\Service;
+namespace Test\Org;
 
+use Think\Exception;
 
-class EncryptService {
-
+class AES{
 
     public static function encrypt($input, $key) {
+        if(!function_exists('mcrypt_get_block_size')){
+            throw new Exception("请安装mcrypt扩展库!");
+        }
         $size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-        $input = EncryptService::pkcs7_pad($input, $size);
+        $input = AES::pkcs7_pad($input, $size);
         $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
         $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
         $iv = "1234567812345678";
