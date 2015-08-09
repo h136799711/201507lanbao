@@ -35,6 +35,20 @@ class AccountApi
      * 更新用户信息
      */
     const UPDATE = "Common/Account/update";
+    /**
+     * 连续运动天数加1
+     */
+    const SET_CONTINUOUS_DAY_INC = "Common/Account/setContinuousDayInc";
+
+    /**
+     * 连续运动天数加1
+     * @param $uid
+     * @return mixed
+     */
+    public function setContinuousDayInc($uid){
+        $result = apiCall(MemberApi::SET_INC,array(array('uid'=>$uid),'continuous_day',1));
+        return $result;
+    }
 
     public function update($id,$entity){
 

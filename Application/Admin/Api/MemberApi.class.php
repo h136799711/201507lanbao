@@ -16,6 +16,10 @@ class MemberApi extends Api{
     /**
      * 添加
      */
+    const SET_INC = "Admin/Member/setInc";
+    /**
+     * 添加
+     */
     const ADD = "Admin/Member/add";
     /**
      * 保存

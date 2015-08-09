@@ -10,7 +10,10 @@ namespace Api\Controller;
 
 
 
+use Admin\Api\MemberApi;
 use Bluenow\Api\BicyleDataApi;
+use Common\Api\AccountApi;
+use Uclient\Api\UserApi;
 
 class BicyleController extends ApiController{
 
@@ -147,6 +150,7 @@ class BicyleController extends ApiController{
         if(empty($max)){
             $max = $ret;
         }
+
         $this->apiReturnSuc($max);
 
     }
@@ -212,7 +216,9 @@ class BicyleController extends ApiController{
         $notes = "应用".$this->client_id.":[用户".$uid."],调用动感数据上报接口";
 
         addLog("Bicyle/add",$_GET,$_POST,$notes);
-
+        if($upload_time == 0){
+            $upload_time = time();
+        }
         $entity = array(
             'uid'=>$uid,
             'uuid'=>$uuid,
@@ -232,6 +238,7 @@ class BicyleController extends ApiController{
         $result = apiCall(BicyleDataApi::ADD,array($entity));
 
         if($result['status']){
+            $this->update_continuous_day($uid);
             $this->apiReturnSuc($result['info']);
         }else{
             $this->apiReturnErr($result['info']);
@@ -249,7 +256,7 @@ class BicyleController extends ApiController{
 
         $notes = "应用".$this->client_id.":[用户".$uid."],调用个人最好成绩";
 
-        addLog("Bicyle/add",$_GET,$_POST,$notes);
+        addLog("Bicyle/bestResult",$_GET,$_POST,$notes);
         $entity = array(
             'uid'=>$uid,
         );
@@ -309,5 +316,86 @@ class BicyleController extends ApiController{
     function getSupportMethod()
     {
         // TODO: Implement getSupportMethod() method.
+    }
+
+    /**
+     * 更新连续运动天数
+     * 时间点:
+     * 1. 上报数据的时候
+     * @param $uid
+     */
+    private function update_continuous_day($uid){
+        $notes = "应用".$this->client_id.":[用户".$uid."],更新连续运动天数";
+
+        addLog("Bicyle/update_continuous_day",$_GET,$_POST,$notes);
+        $yester_year = date('Y',time()-24*3600);
+        $yester_month = date('m',time()-24*3600);
+        $yester_day = date('d',time()-24*3600);
+        $year = date('Y',time());
+        $month = date('m',time());
+        $day = date('d',time());
+
+        $map = array(
+            'upload_year'=>$year,
+            'upload_month'=>$month,
+            'upload_day'=>$day,
+        );
+
+        $result = apiCall(BicyleDataApi::COUNT,array($map));
+//        echo "count今天";
+//        dump($result);
+        if($result['status']){
+            $cnt = $result['info'];
+            if($cnt > 0){
+                //已经处理过
+                return;
+            }
+        }else{
+            LogRecord($result['info'],__FILE__.__LINE__);
+            $this->apiReturnErr($result['info']);
+        }
+
+        $map = array(
+            'upload_year'=>$yester_year,
+            'upload_month'=>$yester_month,
+            'upload_day'=>$yester_day,
+        );
+
+        $result = apiCall(BicyleDataApi::COUNT,array($map));
+
+        $dont_sports = false;
+
+        if($result['status']){
+            $cnt = $result['info'];
+            if($cnt == 0){
+                //昨天没运动
+                $dont_sports = true;
+            }
+        }else{
+            LogRecord($result['info'],__FILE__.__LINE__);
+            $this->apiReturnErr($result['info']);
+        }
+
+        $entity = array(
+            'continuous_day'=>1,
+        );
+
+
+        if($dont_sports){
+            //重置连续天数
+            $result = apiCall(MemberApi::SAVE,array(array('uid'=>$uid),$entity));
+            if(!$result['status']){
+                LogRecord($result['info'],__FILE__.__LINE__);
+                $this->apiReturnErr($result['info']);
+            }
+        }else{
+
+            $result = apiCall(AccountApi::SET_CONTINUOUS_DAY_INC,array($uid));
+            if(!$result['status']){
+                LogRecord($result['info'],__FILE__.__LINE__);
+                $this->apiReturnErr($result['info']);
+            }
+        }
+
     }
 }
