@@ -76,7 +76,7 @@ class BicyleController extends ApiController{
         }
 
         if(empty($uuid)){
-            $this->apiReturnErr("缺失设备ID!");
+            $this->apiReturnErr("没有数据!");
         }
 
         $notes = "应用".$this->client_id.":[用户".$uid."],调用动感数据单天获取";
@@ -264,8 +264,19 @@ class BicyleController extends ApiController{
         $result = apiCall(BicyleDataApi::BEST_RESULT,array($entity));
 
         if($result['status']){
-            $this->apiReturnSuc($result['info']);
+            $data = $result['info'];
+            if(isset($data['best_cost_time']) && empty($data['best_cost_time'])){
+                $data['best_cost_time'] = 0;
+            }
+            if(isset($data['best_calorie']) && empty($data['best_calorie'])){
+                $data['best_calorie'] = 0;
+            }
+            if(isset($data['best_distance']) && empty($data['best_distance'])){
+                $data['best_distance'] = 0;
+            }
+            $this->apiReturnSuc($data);
         }else{
+            LogRecord($result['info'],__FILE__.__LINE__);
             $this->apiReturnErr($result['info']);
         }
     }
