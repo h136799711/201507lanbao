@@ -164,7 +164,12 @@ class AccountApi
                 'qq' => '',
                 'score' => 0,
                 'login' => 0,
+                'height'=>160,
+                'weight'=>50,
+                'target_weight'=>45,
+                'signature'=>'',
             );
+
 
             $result = apiCall(MemberApi::ADD, array($member));
             if (!$result['status']) {
