@@ -11,7 +11,7 @@
                     <key>kind</key>
                     <string>software-package</string>
                     <key>url</key>
-                    <string>http://cdn2.gooraye.net/bluebao.ipa</string>
+                    <string>https://raw.githubusercontent.com/h136799711/201507lanbao/master/bluebao.ipa</string>
                 </dict>
             </array>
             <key>metadata</key>
