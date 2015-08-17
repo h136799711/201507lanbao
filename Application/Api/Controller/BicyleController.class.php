@@ -109,13 +109,14 @@ class BicyleController extends ApiController{
         addWeixinLog($count,"bicyleData");
 
         $ret = array(
-            'speed'=>0,
-            'heart_rate'=>0,
-            'distance'=>0,
-            'total_distance'=>0,
-            'cost_time'=>0,
-            'calorie'=>0,
-            'upload_time'=>0,
+//            'speed'=>0,
+//            'heart_rate'=>0,
+//            'distance'=>0,
+//            'total_distance'=>0,
+//            'cost_time'=>0,
+//            'calorie'=>0,
+//            'upload_time'=>0,
+//            'target_'
         );
 
         $size = 500;
