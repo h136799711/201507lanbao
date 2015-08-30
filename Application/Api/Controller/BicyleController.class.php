@@ -187,7 +187,6 @@ class BicyleController extends ApiController{
      */
     public function add(){
 
-
         //TODO: 数据上报
         $uid = $this->_post('uid',0);
 
@@ -289,9 +288,12 @@ class BicyleController extends ApiController{
             $this->apiReturnErr("缺失UID参数!");
         }
 
+        $notes = "应用".$this->client_id.":[用户".$uid."],调用个人总成绩";
+
+        addLog("Bicyle/total",$_GET,$_POST,$notes);
         //TODO: 缓存600秒
-//        S("Bicyle_total_result",null);
-        $result_data = S("Bicyle_total_result");
+        S("Bicyle_total_result",null);
+        $result_data = S("Bicyle_total_result".$uid);
         if($result_data == null){
             $result_data = array();
 

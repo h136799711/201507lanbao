@@ -124,6 +124,8 @@ class BicyleDataApi extends Api {
 
     public function bestResult($where){
         $result = $this->model->field('max(total_distance) as best_distance,max(calorie) as best_calorie,max(cost_time) as best_cost_time')->where($where)->select();
+//        addLog("bestResult",$this->model->getLastSql(),"post", json_encode($where));
+
         if($result === false){
             return $this->apiReturnErr($this->model->getDbError());
         }else{
