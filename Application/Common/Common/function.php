@@ -536,7 +536,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
 	}
 
 //    M('ActionLog','common_')->add($data);
-		
+
     if(!empty($action_info['rule'])){
         //解析行为
         $rules = parse_action($action, $user_id);
@@ -670,7 +670,8 @@ function time_format($time = NULL,$format='Y-m-d H:i'){
  */
 function get_nickname($uid = 0){
     static $list;
-    if(!($uid && is_numeric($uid))){ //获取当前登录用户名
+    $uid = intval($uid);
+    if(is_nan($uid) ||   $uid ==  0){ //获取当前登录用户名
         return session('global_user.username');
     }
 
@@ -684,9 +685,8 @@ function get_nickname($uid = 0){
     if(isset($list[$key])){ //已缓存，直接使用
         $name = $list[$key];
     } else { //调用接口获取用户信息
-    		$result = apiCall("Admin/Member/getInfo",array("uid"=>$uid));
-		
-//      $info = M('Member')->field('nickname')->find($uid);
+
+        $result = apiCall(\Admin\Api\MemberApi::GET_INFO ,array(array("uid"=>$uid)));
 
         if($result['status'] !== false && $result['info']['nickname'] ){
             $nickname = $result['info']['nickname'];

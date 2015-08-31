@@ -7,6 +7,7 @@
  */
 namespace Api\Controller;
 
+use Bluenow\Api\BicyleDataApi;
 use Common\Api\AccountApi;
 use Uclient\Model\OAuth2TypeModel;
 
@@ -54,7 +55,13 @@ class UserController extends ApiController{
         if($result['status']){
             $uid = $result['info'];
             $result = apiCall(AccountApi::GET_INFO,array($uid));
-            action_log("api_user_login","common_member",$uid,$uid);
+            $sportsResult = apiCall(BicyleDataApi::SPORTS_DAY,array($uid));
+            if($sportsResult['status']){
+                $result['info']['continuous_day'] = $sportsResult['info'][0]['sportsday'];
+            }else{
+                LogRecord($sportsResult['info'],__FILE__.__LINE__);
+            }
+            action_log("api_user_login","member",$uid,$uid);
             $this->apiReturnSuc($result['info']);
         }else{
             $this->apiReturnErr($result['info']);

@@ -15,6 +15,11 @@ class BicyleDataApi extends Api {
 
     /**
      *
+     * 运动天数
+     */
+    const SPORTS_DAY = "Bluenow/BicyleData/sportsDay";
+    /**
+     *
      * 累加里程
      */
     const SUM_DISTANCE = "Bluenow/BicyleData/sum_distance";
@@ -93,6 +98,18 @@ class BicyleDataApi extends Api {
     {
         $this->model = new BicyleDataModel();
     }
+
+    public function sportsDay($uid){
+        $result = $this->model->query("select count(*) as sportsday from(SELECT upload_year FROM itboye_bicyle_data where `uid` = ".$uid." group by upload_year,upload_month,upload_day) as tmp");
+        if($result === false){
+            return $this->apiReturnErr($this->model->getDbError());
+        }else{
+            return $this->apiReturnSuc($result);
+        }
+    }
+
+
+
 
     public function sum_distance($uid){
         $result = $this->model->query("select sum(sum_max_distance) as sum_max_distance from ( SELECT max(total_distance) as sum_max_distance FROM itboye_bicyle_data where `uid` = ".$uid." group by upload_day,upload_year,upload_month ) as tmp");
