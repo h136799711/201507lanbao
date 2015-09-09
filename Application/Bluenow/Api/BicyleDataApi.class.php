@@ -99,6 +99,33 @@ class BicyleDataApi extends Api {
         $this->model = new BicyleDataModel();
     }
 
+
+    public function query($map = null, $page = array('curpage'=>0,'size'=>10), $order = false) {
+        $query = $this->model;
+        if(!is_null($map)){
+            $query = $query->where($map);
+        }
+        if(!($order === false)){
+            $query = $query->order($order);
+        }
+        if(!($fields === false)){
+            $query = $query->field($fields);
+        }
+        $list = $query -> page($page['curpage'] . ',' . $page['size']) -> select();
+
+
+        if ($list === false) {
+            $error = $this -> model -> getDbError();
+            return $this -> apiReturnErr($error);
+        }
+
+        $count = $this -> model -> where($map) -> count();
+
+
+        return $this -> apiReturnSuc(array("count" => $count, "list" => $list));
+    }
+
+
     public function sportsDay($uid){
         $result = $this->model->query("select count(*) as sportsday from(SELECT upload_year FROM itboye_bicyle_data where `uid` = ".$uid." group by upload_year,upload_month,upload_day) as tmp");
         if($result === false){
@@ -119,6 +146,7 @@ class BicyleDataApi extends Api {
             return $this->apiReturnSuc($result);
         }
     }
+
 
 
     public function sum_time($uid){
